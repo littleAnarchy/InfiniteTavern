@@ -1,6 +1,6 @@
 namespace InfiniteTavern.Application.Models;
 
-public class ClaudeResponse
+public class AIResponse
 {
     public string Narrative { get; set; } = string.Empty;
     public List<GameEvent> Events { get; set; } = new();

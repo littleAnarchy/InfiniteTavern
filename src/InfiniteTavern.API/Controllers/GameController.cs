@@ -27,7 +27,7 @@ public class GameController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(request.PlayerName) || 
+            if (string.IsNullOrWhiteSpace(request.PlayerName) ||
                 string.IsNullOrWhiteSpace(request.CharacterName))
             {
                 return BadRequest("Player name and character name are required");

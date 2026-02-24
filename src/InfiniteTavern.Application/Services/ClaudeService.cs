@@ -21,7 +21,7 @@ public class ClaudeService : IAIService
         _apiKey = configuration["Anthropic:ApiKey"] ?? throw new InvalidOperationException("Anthropic API key not configured");
     }
 
-    public async Task<ClaudeResponse> GenerateResponseAsync(string systemPrompt, string userPrompt)
+    public async Task<AIResponse> GenerateResponseAsync(string systemPrompt, string userPrompt)
     {
         try
         {
@@ -59,7 +59,7 @@ public class ClaudeService : IAIService
             // Extract JSON from markdown code blocks if present
             responseText = ExtractJsonFromMarkdown(responseText);
 
-            var gameResponse = JsonSerializer.Deserialize<ClaudeResponse>(responseText, new JsonSerializerOptions
+            var gameResponse = JsonSerializer.Deserialize<AIResponse>(responseText, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
@@ -71,7 +71,7 @@ public class ClaudeService : IAIService
             _logger.LogError(ex, "Failed to parse Claude response as JSON");
 
             // Return a default response on parse failure
-            return new ClaudeResponse
+            return new AIResponse
             {
                 Narrative = "The dungeon master seems confused. Nothing happens.",
                 Events = new List<GameEvent>()

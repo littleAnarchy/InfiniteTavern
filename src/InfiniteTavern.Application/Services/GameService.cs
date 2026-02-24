@@ -17,6 +17,7 @@ public class GameService : IGameService
     private readonly IAIService _aiService;
     private readonly IPromptBuilderService _promptBuilder;
     private readonly IDiceService _diceService;
+    private readonly IGameEventHandlerService _eventHandler;
     private readonly ILogger<GameService> _logger;
 
     public GameService(
@@ -24,12 +25,14 @@ public class GameService : IGameService
         IAIService aiService,
         IPromptBuilderService promptBuilder,
         IDiceService diceService,
+        IGameEventHandlerService eventHandler,
         ILogger<GameService> logger)
     {
         _repository = repository;
         _aiService = aiService;
         _promptBuilder = promptBuilder;
         _diceService = diceService;
+        _eventHandler = eventHandler;
         _logger = logger;
     }
 
@@ -252,24 +255,24 @@ Make it unique and memorable - different from other adventures!";
             request.PlayerAction);
 
         // Call AI Service
-        var claudeResponse = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt);
+        var aiResponse = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt);
 
         // Apply events
         var appliedEvents = new List<string>();
-        foreach (var gameEvent in claudeResponse.Events)
+        foreach (var gameEvent in aiResponse.Events)
         {
-            ApplyEvent(session, gameEvent, appliedEvents);
+            _eventHandler.ApplyEvent(session, gameEvent, appliedEvents);
         }
 
         // Handle location change
-        if (claudeResponse.LocationChange != null)
+        if (aiResponse.LocationChange != null)
         {
-            session.CurrentLocation = claudeResponse.LocationChange.NewLocation;
-            appliedEvents.Add($"Moved to {claudeResponse.LocationChange.NewLocation}");
+            session.CurrentLocation = aiResponse.LocationChange.NewLocation;
+            appliedEvents.Add($"Moved to {aiResponse.LocationChange.NewLocation}");
         }
 
         // Add new NPCs
-        foreach (var newNpc in claudeResponse.NewNpcs)
+        foreach (var newNpc in aiResponse.NewNpcs)
         {
             var npc = new Npc
             {
@@ -284,7 +287,7 @@ Make it unique and memorable - different from other adventures!";
         }
 
         // Update quests
-        foreach (var questUpdate in claudeResponse.QuestUpdates)
+        foreach (var questUpdate in aiResponse.QuestUpdates)
         {
             var quest = session.Quests.FirstOrDefault(q => q.Title == questUpdate.QuestTitle);
             if (quest != null && Enum.TryParse<QuestStatus>(questUpdate.Status, out var status))
@@ -296,11 +299,11 @@ Make it unique and memorable - different from other adventures!";
 
         // Process skill checks
         var diceRolls = new List<DiceRollResult>();
-        foreach (var skillCheck in claudeResponse.SkillChecks)
+        foreach (var skillCheck in aiResponse.SkillChecks)
         {
             var rollResult = ProcessSkillCheck(session.PlayerCharacter, skillCheck);
             diceRolls.Add(rollResult);
-            
+
             var successText = rollResult.Success ? "succeeded" : "failed";
             appliedEvents.Add($"Skill check ({skillCheck.Attribute}): {successText}!");
         }
@@ -311,7 +314,7 @@ Make it unique and memorable - different from other adventures!";
         // Save memory entry
         var memoryEntry = new MemoryEntry
         {
-            Content = $"Turn {session.TurnNumber}: Player action: {request.PlayerAction}. {claudeResponse.Narrative.Substring(0, Math.Min(200, claudeResponse.Narrative.Length))}",
+            Content = $"Turn {session.TurnNumber}: Player action: {request.PlayerAction}. {aiResponse.Narrative.Substring(0, Math.Min(200, aiResponse.Narrative.Length))}",
             Type = MemoryType.Event,
             ImportanceScore = 5,
             CreatedAt = DateTime.UtcNow
@@ -332,7 +335,7 @@ Make it unique and memorable - different from other adventures!";
 
         return new TurnResponse
         {
-            Narrative = claudeResponse.Narrative,
+            Narrative = aiResponse.Narrative,
             PlayerHP = session.PlayerCharacter.HP,
             MaxPlayerHP = session.PlayerCharacter.MaxHP,
             CurrentLocation = session.CurrentLocation,
@@ -351,110 +354,6 @@ Make it unique and memorable - different from other adventures!";
         };
     }
 
-    private void ApplyEvent(GameSession session, GameEvent gameEvent, List<string> appliedEvents)
-    {
-        switch (gameEvent.Type.ToLower())
-        {
-            case "damage":
-                if (gameEvent.Target.ToLower() == "player" && session.PlayerCharacter != null)
-                {
-                    session.PlayerCharacter.HP = Math.Max(0, session.PlayerCharacter.HP - gameEvent.Amount);
-                    appliedEvents.Add($"Player took {gameEvent.Amount} damage: {gameEvent.Reason}");
-
-                    if (session.PlayerCharacter.HP == 0)
-                    {
-                        appliedEvents.Add("Player has fallen!");
-                    }
-                }
-                else
-                {
-                    var npc = session.Npcs.FirstOrDefault(n =>
-                        n.Name.Equals(gameEvent.Target, StringComparison.OrdinalIgnoreCase) && n.IsAlive);
-                    if (npc != null)
-                    {
-                        npc.IsAlive = false;
-                        appliedEvents.Add($"{npc.Name} was defeated: {gameEvent.Reason}");
-                    }
-                }
-                break;
-
-            case "heal":
-                if (gameEvent.Target.ToLower() == "player" && session.PlayerCharacter != null)
-                {
-                    session.PlayerCharacter.HP = Math.Min(
-                        session.PlayerCharacter.MaxHP,
-                        session.PlayerCharacter.HP + gameEvent.Amount);
-                    appliedEvents.Add($"Player healed {gameEvent.Amount} HP: {gameEvent.Reason}");
-                }
-                break;
-
-            case "item_found":
-                if (session.PlayerCharacter != null)
-                {
-                    var existingItem = session.PlayerCharacter.Inventory
-                        .FirstOrDefault(i => i.Name.Equals(gameEvent.Reason, StringComparison.OrdinalIgnoreCase));
-
-                    if (existingItem != null)
-                    {
-                        existingItem.Quantity += gameEvent.Amount > 0 ? gameEvent.Amount : 1;
-                    }
-                    else
-                    {
-                        session.PlayerCharacter.Inventory.Add(new Item
-                        {
-                            Name = gameEvent.Reason,
-                            Type = "Miscellaneous",
-                            Description = "Found during adventure",
-                            Quantity = gameEvent.Amount > 0 ? gameEvent.Amount : 1
-                        });
-                    }
-                    appliedEvents.Add($"Found: {gameEvent.Reason} x{(gameEvent.Amount > 0 ? gameEvent.Amount : 1)}");
-                }
-                break;
-
-            case "item_lost":
-                if (session.PlayerCharacter != null)
-                {
-                    var itemToRemove = session.PlayerCharacter.Inventory
-                        .FirstOrDefault(i => i.Name.Equals(gameEvent.Reason, StringComparison.OrdinalIgnoreCase));
-
-                    if (itemToRemove != null)
-                    {
-                        var amountToRemove = gameEvent.Amount > 0 ? gameEvent.Amount : itemToRemove.Quantity;
-                        itemToRemove.Quantity -= amountToRemove;
-
-                        if (itemToRemove.Quantity <= 0)
-                        {
-                            session.PlayerCharacter.Inventory.Remove(itemToRemove);
-                        }
-
-                        appliedEvents.Add($"Lost: {gameEvent.Reason} x{amountToRemove}");
-                    }
-                }
-                break;
-
-            case "gold_found":
-                if (session.PlayerCharacter != null)
-                {
-                    session.PlayerCharacter.Gold += gameEvent.Amount;
-                    appliedEvents.Add($"Found {gameEvent.Amount} gold: {gameEvent.Reason}");
-                }
-                break;
-
-            case "gold_spent":
-                if (session.PlayerCharacter != null)
-                {
-                    session.PlayerCharacter.Gold = Math.Max(0, session.PlayerCharacter.Gold - gameEvent.Amount);
-                    appliedEvents.Add($"Spent {gameEvent.Amount} gold: {gameEvent.Reason}");
-                }
-                break;
-
-            default:
-                _logger.LogWarning("Unknown event type: {EventType}", gameEvent.Type);
-                break;
-        }
-    }
-
     private DiceRollResult ProcessSkillCheck(PlayerCharacter player, SkillCheck skillCheck)
     {
         // Get attribute value
@@ -468,12 +367,12 @@ Make it unique and memorable - different from other adventures!";
 
         // Roll 1d20
         var diceRoll = _diceService.Roll("1d20");
-        
+
         // Calculate total (d20 + attribute modifier)
         // Modifier = (attribute - 10) / 2
         var modifier = (attributeValue - 10) / 2;
         var total = diceRoll + modifier;
-        
+
         // Check success
         var success = total >= skillCheck.Difficulty;
 
@@ -509,11 +408,11 @@ Make it unique and memorable - different from other adventures!";
 
         try
         {
-            var claudeResponse = await _aiService.GenerateResponseAsync(systemPrompt, summaryPrompt);
+            var aiResponse = await _aiService.GenerateResponseAsync(systemPrompt, summaryPrompt);
 
             var summary = new MemoryEntry
             {
-                Content = claudeResponse.Narrative,
+                Content = aiResponse.Narrative,
                 Type = MemoryType.Summary,
                 ImportanceScore = 10,
                 CreatedAt = DateTime.UtcNow

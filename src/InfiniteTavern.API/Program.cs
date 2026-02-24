@@ -16,20 +16,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { 
-        Title = "Infinite Tavern API", 
+    c.SwaggerDoc("v1", new()
+    {
+        Title = "Infinite Tavern API",
         Version = "v1",
         Description = "AI-powered text RPG backend"
     });
 });
 
 // MongoDB
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "mongodb://localhost:27017";
 var databaseName = builder.Configuration["MongoDB:DatabaseName"] ?? "InfiniteTavern";
 
 builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(connectionString));
-builder.Services.AddScoped<IMongoDatabase>(sp => 
+builder.Services.AddScoped<IMongoDatabase>(sp =>
     sp.GetRequiredService<IMongoClient>().GetDatabase(databaseName));
 builder.Services.AddScoped<MongoDbContext>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
@@ -57,6 +58,7 @@ else
 // Application Services
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPromptBuilderService, PromptBuilderService>();
+builder.Services.AddScoped<IGameEventHandlerService, GameEventHandlerService>();
 builder.Services.AddSingleton<IDiceService, DiceService>();
 
 // CORS
@@ -99,8 +101,9 @@ app.UseCors("AllowAll");
 app.UseAuthorization();
 
 // Health check endpoint
-app.MapGet("/health", () => Results.Ok(new { 
-    status = "healthy", 
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
     timestamp = DateTime.UtcNow,
     environment = app.Environment.EnvironmentName
 }));
