@@ -1,6 +1,9 @@
 import { NewGameRequest, NewGameResponse, TurnRequest, TurnResponse } from '../types/game';
 
-const API_BASE_URL = '/api/game';
+// Use environment variable for API URL, fallback to local proxy in development
+const API_BASE_URL = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api/game`
+  : '/api/game';
 
 export const gameService = {
   async createNewGame(request: NewGameRequest): Promise<NewGameResponse> {
