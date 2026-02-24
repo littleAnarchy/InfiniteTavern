@@ -95,7 +95,6 @@ public class GameService : IGameService
         var gameSession = new GameSession
         {
             Id = Guid.NewGuid(),
-            PlayerName = request.PlayerName,
             CurrentLocation = "The Infinite Tavern",
             WorldTime = "Evening",
             Language = request.Language,
@@ -109,8 +108,8 @@ public class GameService : IGameService
 
         await _repository.CreateAsync(gameSession);
 
-        _logger.LogInformation("Created new game session {SessionId} for player {PlayerName}",
-            gameSession.Id, request.PlayerName);
+        _logger.LogInformation("Created new game session {SessionId} for character {CharacterName}",
+            gameSession.Id, request.CharacterName);
 
         return new NewGameResponse
         {

@@ -31,7 +31,6 @@ public class DiceRollResult
 
 public class NewGameRequest
 {
-    public string PlayerName { get; set; } = string.Empty;
     public string CharacterName { get; set; } = string.Empty;
     public string Race { get; set; } = "Human";
     public string Class { get; set; } = "Adventurer";

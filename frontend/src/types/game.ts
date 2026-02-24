@@ -1,6 +1,5 @@
 // API Request Types
 export interface NewGameRequest {
-  playerName: string;
   characterName: string;
   race: string;
   class: string;

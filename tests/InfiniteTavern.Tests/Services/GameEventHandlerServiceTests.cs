@@ -385,7 +385,6 @@ public class GameEventHandlerServiceTests
         return new GameSession
         {
             Id = Guid.NewGuid(),
-            PlayerName = "TestPlayer",
             CurrentLocation = "Test Location",
             PlayerCharacter = new PlayerCharacter
             {

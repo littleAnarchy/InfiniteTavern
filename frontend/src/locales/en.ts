@@ -5,8 +5,6 @@ export default {
   // Character Creation
   welcomeTitle: '🏰 Welcome to the Infinite Tavern',
   welcomeSubtitle: 'Create your character to begin your adventure',
-  yourName: 'Your Name',
-  enterYourName: 'Enter your name',
   characterName: 'Character Name',
   enterCharacterName: 'Enter character name',
   race: 'Race',

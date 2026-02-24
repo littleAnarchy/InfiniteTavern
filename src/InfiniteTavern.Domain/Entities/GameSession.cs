@@ -9,7 +9,6 @@ public class GameSession
     [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
 
-    public string PlayerName { get; set; } = string.Empty;
     public string CurrentLocation { get; set; } = "The Infinite Tavern";
     public string WorldTime { get; set; } = "Evening";
     public string Language { get; set; } = "English";

@@ -12,7 +12,6 @@ const CLASSES = ['Warrior', 'Wizard', 'Rogue', 'Cleric', 'Ranger'];
 
 export default function CharacterCreation({ onCreateCharacter, isLoading }: CharacterCreationProps) {
   const { t, locale } = useLocale();
-  const [playerName, setPlayerName] = useState('');
   const [characterName, setCharacterName] = useState('');
   const [race, setRace] = useState(RACES[0]);
   const [characterClass, setCharacterClass] = useState(CLASSES[0]);
@@ -24,7 +23,6 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onCreateCharacter({
-      playerName,
       characterName,
       race,
       class: characterClass,
@@ -38,19 +36,6 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
       <p className="subtitle">{t.welcomeSubtitle}</p>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="playerName">{t.yourName}</label>
-          <input
-            id="playerName"
-            type="text"
-            value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
-            placeholder={t.enterYourName}
-            required
-            disabled={isLoading}
-          />
-        </div>
-
         <div className="form-group">
           <label htmlFor="characterName">{t.characterName}</label>
           <input

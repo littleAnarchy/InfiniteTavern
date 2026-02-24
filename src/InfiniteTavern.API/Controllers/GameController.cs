@@ -27,10 +27,9 @@ public class GameController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(request.PlayerName) ||
-                string.IsNullOrWhiteSpace(request.CharacterName))
+            if (string.IsNullOrWhiteSpace(request.CharacterName))
             {
-                return BadRequest("Player name and character name are required");
+                return BadRequest("Character name is required");
             }
 
             var response = await _gameService.CreateNewGameAsync(request);

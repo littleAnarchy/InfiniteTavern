@@ -239,7 +239,6 @@ public class PromptBuilderServiceTests
         var session = new GameSession
         {
             Id = Guid.NewGuid(),
-            PlayerName = "TestPlayer",
             CurrentLocation = "The Infinite Tavern",
             WorldTime = "Evening",
             TurnNumber = 1,
