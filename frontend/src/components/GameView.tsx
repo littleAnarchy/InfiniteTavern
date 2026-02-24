@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GameState } from '../types/game';
-import { useLocale } from '../contexts/LocaleContext';
+import { useTranslation } from 'react-i18next';
 import PlayerStats from './PlayerStats';
 import TurnHistory from './TurnHistory';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -13,7 +13,7 @@ interface GameViewProps {
 }
 
 export default function GameView({ gameState, onSubmitAction, onNewGame }: GameViewProps) {
-  const { t } = useLocale();
+  const { t } = useTranslation();
   const [action, setAction] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,11 +31,11 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
   return (
     <div className="game-view">
       <div className="game-header">
-        <h1>{t.gameTitle}</h1>
+        <h1>{t('gameTitle')}</h1>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <LanguageSwitcher />
           <button onClick={onNewGame} className="btn-secondary" disabled={gameState.isLoading}>
-            {t.newGame}
+            {t('newGame')}
           </button>
         </div>
       </div>
@@ -55,12 +55,12 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
               type="text"
               value={action}
               onChange={(e) => setAction(e.target.value)}
-              placeholder={t.whatDoYouDo}
+              placeholder={t('whatDoYouDo')}
               disabled={gameState.isLoading}
               className="action-input"
             />
             <button type="submit" disabled={gameState.isLoading || !action.trim()} className="btn-primary">
-              {gameState.isLoading ? '...' : t.act}
+              {gameState.isLoading ? '...' : t('act')}
             </button>
           </form>
 

@@ -1,22 +1,27 @@
-import { useLocale } from '../contexts/LocaleContext';
+import { useTranslation } from 'react-i18next';
 import './LanguageSwitcher.css';
 
 export default function LanguageSwitcher() {
-  const { locale, setLocale, t } = useLocale();
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('locale', lng);
+  };
 
   return (
     <div className="language-switcher">
       <button
-        className={locale === 'uk' ? 'active' : ''}
-        onClick={() => setLocale('uk')}
-        title={t.ukrainian}
+        className={i18n.language === 'uk' ? 'active' : ''}
+        onClick={() => changeLanguage('uk')}
+        title={t('ukrainian')}
       >
         🇺🇦 UA
       </button>
       <button
-        className={locale === 'en' ? 'active' : ''}
-        onClick={() => setLocale('en')}
-        title={t.english}
+        className={i18n.language === 'en' ? 'active' : ''}
+        onClick={() => changeLanguage('en')}
+        title={t('english')}
       >
         🇬🇧 EN
       </button>

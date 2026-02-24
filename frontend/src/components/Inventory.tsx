@@ -1,5 +1,5 @@
 import { Item } from '../types/game';
-import { useLocale } from '../contexts/LocaleContext';
+import { useTranslation } from 'react-i18next';
 import './Inventory.css';
 
 interface InventoryProps {
@@ -8,7 +8,7 @@ interface InventoryProps {
 }
 
 export default function Inventory({ inventory, gold }: InventoryProps) {
-  const { t } = useLocale();
+  const { t } = useTranslation();
 
   const getItemIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -31,7 +31,7 @@ export default function Inventory({ inventory, gold }: InventoryProps) {
   return (
     <div className="inventory">
       <div className="inventory-header">
-        <h3>💼 {t.inventory}</h3>
+        <h3>💼 {t('inventory')}</h3>
         <div className="gold-display">
           <span className="gold-icon">💰</span>
           <span className="gold-amount">{gold}</span>
@@ -41,7 +41,7 @@ export default function Inventory({ inventory, gold }: InventoryProps) {
       <div className="inventory-list">
         {inventory.length === 0 ? (
           <div className="empty-inventory">
-            <p>{t.emptyInventory}</p>
+            <p>{t('emptyInventory')}</p>
           </div>
         ) : (
           inventory.map((item, index) => (
@@ -59,7 +59,7 @@ export default function Inventory({ inventory, gold }: InventoryProps) {
                     )}
                   </span>
                   {item.isEquipped && (
-                    <span className="equipped-badge">{t.equipped}</span>
+                    <span className="equipped-badge">{t('equipped')}</span>
                   )}
                 </div>
                 <div className="item-type">{getItemTypeTranslation(item.type)}</div>

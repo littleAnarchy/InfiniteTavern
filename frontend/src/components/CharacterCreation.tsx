@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NewGameRequest } from '../types/game';
-import { useLocale } from '../contexts/LocaleContext';
+import { useTranslation } from 'react-i18next';
 
 interface CharacterCreationProps {
   onCreateCharacter: (request: NewGameRequest) => void;
@@ -11,14 +11,14 @@ const RACES = ['Human', 'Elf', 'Dwarf', 'Orc', 'Halfling'];
 const CLASSES = ['Warrior', 'Wizard', 'Rogue', 'Cleric', 'Ranger'];
 
 export default function CharacterCreation({ onCreateCharacter, isLoading }: CharacterCreationProps) {
-  const { t, locale } = useLocale();
+  const { t, i18n } = useTranslation();
   const [characterName, setCharacterName] = useState('');
   const [race, setRace] = useState(RACES[0]);
   const [characterClass, setCharacterClass] = useState(CLASSES[0]);
-  const [gameLanguage, setGameLanguage] = useState(locale === 'uk' ? 'Ukrainian' : 'English');
+  const [gameLanguage, setGameLanguage] = useState(i18n.language === 'uk' ? 'Ukrainian' : 'English');
 
-  const translateRace = (race: string) => (t as any)[race.toLowerCase()] || race;
-  const translateClass = (cls: string) => (t as any)[cls.toLowerCase()] || cls;
+  const translateRace = (race: string) => t(race.toLowerCase(), race);
+  const translateClass = (cls: string) => t(cls.toLowerCase(), cls);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,18 +32,18 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
 
   return (
     <div className="character-creation">
-      <h1>{t.welcomeTitle}</h1>
-      <p className="subtitle">{t.welcomeSubtitle}</p>
+      <h1>{t('welcomeTitle')}</h1>
+      <p className="subtitle">{t('welcomeSubtitle')}</p>
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="characterName">{t.characterName}</label>
+          <label htmlFor="characterName">{t('characterName')}</label>
           <input
             id="characterName"
             type="text"
             value={characterName}
             onChange={(e) => setCharacterName(e.target.value)}
-            placeholder={t.enterCharacterName}
+            placeholder={t('enterCharacterName')}
             required
             disabled={isLoading}
           />
@@ -51,7 +51,7 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="race">{t.race}</label>
+            <label htmlFor="race">{t('race')}</label>
             <select
               id="race"
               value={race}
@@ -67,7 +67,7 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
           </div>
 
           <div className="form-group">
-            <label htmlFor="class">{t.class}</label>
+            <label htmlFor="class">{t('class')}</label>
             <select
               id="class"
               value={characterClass}
@@ -84,29 +84,29 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
         </div>
 
         <div className="form-group">
-          <label htmlFor="gameLanguage">{t.gameLanguage}</label>
+          <label htmlFor="gameLanguage">{t('gameLanguage')}</label>
           <select
             id="gameLanguage"
             value={gameLanguage}
             onChange={(e) => setGameLanguage(e.target.value)}
             disabled={isLoading}
           >
-            <option value="Ukrainian">{t.ukrainian}</option>
-            <option value="English">{t.english}</option>
+            <option value="Ukrainian">{t('ukrainian')}</option>
+            <option value="English">{t('english')}</option>
           </select>
           <small style={{ display: 'block', marginTop: '4px', opacity: 0.7 }}>
-            {t.selectLanguage}
+            {t('selectLanguage')}
           </small>
         </div>
 
         <button type="submit" className="btn-primary" disabled={isLoading}>
-          {isLoading ? t.creating : t.beginAdventure}
+          {isLoading ? t('creating') : t('beginAdventure')}
         </button>
 
         {isLoading && (
           <div className="loading-story">
             <div className="loading-spinner"></div>
-            <p>{t.creatingStory}</p>
+            <p>{t('creatingStory')}</p>
           </div>
         )}
       </form>

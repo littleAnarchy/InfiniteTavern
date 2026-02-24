@@ -1,5 +1,5 @@
 import { TurnHistoryEntry } from '../types/game';
-import { useLocale } from '../contexts/LocaleContext';
+import { useTranslation } from 'react-i18next';
 import DiceRoll from './DiceRoll';
 
 interface TurnHistoryProps {
@@ -8,14 +8,14 @@ interface TurnHistoryProps {
 }
 
 export default function TurnHistory({ history, isLoading }: TurnHistoryProps) {
-  const { t } = useLocale();
+  const { t } = useTranslation();
   
   return (
     <div className="turn-history">
       {history.length === 0 && !isLoading && (
         <div className="empty-state">
-          <p>{t.adventureBegins}</p>
-          <p className="hint">{t.firstActionHint}</p>
+          <p>{t('adventureBegins')}</p>
+          <p className="hint">{t('firstActionHint')}</p>
         </div>
       )}
 
@@ -54,7 +54,7 @@ export default function TurnHistory({ history, isLoading }: TurnHistoryProps) {
       {isLoading && (
         <div className="turn-entry loading">
           <div className="loading-spinner"></div>
-          <p>{t.dmThinking}</p>
+          <p>{t('dmThinking')}</p>
         </div>
       )}
     </div>

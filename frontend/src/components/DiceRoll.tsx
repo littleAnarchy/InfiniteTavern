@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DiceRollResult } from '../types/game';
-import { useLocale } from '../contexts/LocaleContext';
+import { useTranslation } from 'react-i18next';
 import './DiceRoll.css';
 
 interface DiceRollProps {
@@ -9,7 +9,7 @@ interface DiceRollProps {
 }
 
 export default function DiceRoll({ roll, onAnimationComplete }: DiceRollProps) {
-  const { t } = useLocale();
+  const { t } = useTranslation();
   const [isRolling, setIsRolling] = useState(true);
   const [displayNumber, setDisplayNumber] = useState(1);
 
@@ -39,7 +39,7 @@ export default function DiceRoll({ roll, onAnimationComplete }: DiceRollProps) {
 
   const getAttributeTranslation = (attr: string) => {
     const key = attr.toLowerCase();
-    return (t as any)[key] || attr;
+    return t(key, attr);
   };
 
   const modifier = Math.floor((roll.attributeValue - 10) / 2);
@@ -51,7 +51,7 @@ export default function DiceRoll({ roll, onAnimationComplete }: DiceRollProps) {
         <span className="dice-icon">🎲</span>
         <div className="dice-roll-info">
           <div className="skill-check-label">
-            {getAttributeTranslation(roll.attribute)} {t.check}
+            {getAttributeTranslation(roll.attribute)} {t('check')}
           </div>
           <div className="skill-check-purpose">{roll.purpose}</div>
         </div>
@@ -78,7 +78,7 @@ export default function DiceRoll({ roll, onAnimationComplete }: DiceRollProps) {
 
       {!isRolling && (
         <div className={`result-badge ${roll.success ? 'success' : 'failure'}`}>
-          {roll.success ? `✓ ${t.success}` : `✗ ${t.failure}`}
+          {roll.success ? `✓ ${t('success')}` : `✗ ${t('failure')}`}
         </div>
       )}
     </div>

@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { GameState, NewGameRequest, TurnRequest } from './types/game';
 import { gameService } from './services/gameService';
-import { useLocale } from './contexts/LocaleContext';
+import { useTranslation } from 'react-i18next';
 import CharacterCreation from './components/CharacterCreation';
 import GameView from './components/GameView';
 import './App.css';
 
 function App() {
-  const { t } = useLocale();
+  const { t } = useTranslation();
   const [gameState, setGameState] = useState<GameState>({
     sessionId: null,
     playerStats: null,
@@ -94,7 +94,7 @@ function App() {
   };
 
   const handleNewGame = () => {
-    if (window.confirm(t.confirmNewGame)) {
+    if (window.confirm(t('confirmNewGame'))) {
       setGameState({
         sessionId: null,
         playerStats: null,
