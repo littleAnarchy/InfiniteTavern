@@ -7,5 +7,5 @@ namespace InfiniteTavern.Application.Services;
 /// </summary>
 public interface IAIService
 {
-    Task<AIResponse> GenerateResponseAsync(string systemPrompt, string userPrompt);
+    Task<AIResponse> GenerateResponseAsync(string systemPrompt, string userPrompt, bool useJsonFormat = true);
 }

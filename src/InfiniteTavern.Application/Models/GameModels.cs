@@ -35,6 +35,7 @@ public class NewGameRequest
     public string Race { get; set; } = "Human";
     public string Class { get; set; } = "Adventurer";
     public string Language { get; set; } = "English";
+    public bool UseDefaultCampaign { get; set; } = true;
 }
 
 public class NewGameResponse

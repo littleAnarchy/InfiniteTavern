@@ -55,6 +55,13 @@ export default {
   ukrainian: 'Українська',
   english: 'English',
   
+  // Campaign Type
+  campaignType: 'Campaign Type',
+  randomCampaign: '🎲 Random Campaign',
+  randomCampaignDesc: 'AI creates a unique story for you',
+  defaultCampaign: '🏰 Default Campaign',
+  defaultCampaignDesc: 'Classic tavern start with Garrick',
+  
   // Inventory
   inventory: 'Inventory',
   emptyInventory: 'Your inventory is empty',

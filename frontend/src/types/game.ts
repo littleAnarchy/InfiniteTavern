@@ -4,6 +4,7 @@ export interface NewGameRequest {
   race: string;
   class: string;
   language: string;
+  useDefaultCampaign: boolean;
 }
 
 export interface TurnRequest {

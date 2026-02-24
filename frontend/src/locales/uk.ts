@@ -55,6 +55,13 @@ export default {
   ukrainian: 'Українська',
   english: 'English',
   
+  // Campaign Type
+  campaignType: 'Тип кампанії',
+  randomCampaign: '🎲 Випадкова кампанія',
+  randomCampaignDesc: 'AI створить унікальну історію для вас',
+  defaultCampaign: '🏰 Дефолтна кампанія',
+  defaultCampaignDesc: 'Класичний старт у таверні з Гарріком',
+  
   // Inventory
   inventory: 'Інвентар',
   emptyInventory: 'Ваш інвентар порожній',

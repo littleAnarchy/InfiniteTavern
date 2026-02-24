@@ -9,27 +9,29 @@
 GET {{baseUrl}}/health
 
 ###
-# Create New Game
+# Create New Game with Random AI-Generated Campaign (Default)
 POST {{baseUrl}}/new-game
 Content-Type: application/json
 
 {
-  "playerName": "Alice",
   "characterName": "Thorin Ironforge",
   "race": "Dwarf",
-  "class": "Warrior"
+  "class": "Warrior",
+  "language": "English",
+  "useDefaultCampaign": false
 }
 
 ###
-# Example: Create Elf Mage
+# Create New Game with Default Tavern Campaign
 POST {{baseUrl}}/new-game
 Content-Type: application/json
 
 {
-  "playerName": "Bob",
   "characterName": "Elara Moonwhisper",
   "race": "Elf",
-  "class": "Mage"
+  "class": "Wizard",
+  "language": "Ukrainian",
+  "useDefaultCampaign": true
 }
 
 ###

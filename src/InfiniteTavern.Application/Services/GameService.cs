@@ -73,7 +73,7 @@ public class GameService : IGameService
         };
 
         // Generate opening story with AI
-        var openingStory = await GenerateOpeningStoryAsync(playerCharacter, request.Language);
+        var openingStory = await GenerateOpeningStoryAsync(playerCharacter, request.Language, request.UseDefaultCampaign);
 
         var tavernKeeper = new Npc
         {
@@ -140,9 +140,17 @@ public class GameService : IGameService
         };
     }
 
-    private async Task<string> GenerateOpeningStoryAsync(PlayerCharacter player, string language)
+    private async Task<string> GenerateOpeningStoryAsync(PlayerCharacter player, string language, bool useDefault)
     {
         var isUkrainian = language.Equals("Ukrainian", StringComparison.OrdinalIgnoreCase);
+
+        // If using default campaign, return fallback immediately
+        if (useDefault)
+        {
+            return isUkrainian
+                ? $"Вітаємо, {player.Name}! Ви - {player.Race} {player.Class}, який щойно прибув до легендарної Нескінченної Таверни. Тепле сяйво ліхтарів освітлює дерев'яні столи, де пригодники з далеких земель діляться розповідями про славу. Гаррік, таверняр, знавіще кивує вам. Що ви робите?"
+                : $"Welcome, {player.Name}! You are a {player.Race} {player.Class} who has just arrived at the legendary Infinite Tavern. The warm glow of lanterns illuminates wooden tables where adventurers from distant lands share tales of glory. Garrick, the tavern keeper, nods at you knowingly. What do you do?";
+        }
 
         var systemPrompt = isUkrainian
             ? @"Ти - креативний Майстер Підземель, що розпочинає нову фентезійну RPG пригоду.
@@ -190,7 +198,7 @@ Make it unique and memorable - different from other adventures!";
 
         try
         {
-            var response = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt);
+            var response = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt, useJsonFormat: false);
             return response.Narrative;
         }
         catch (Exception ex)

@@ -16,6 +16,7 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
   const [race, setRace] = useState(RACES[0]);
   const [characterClass, setCharacterClass] = useState(CLASSES[0]);
   const [gameLanguage, setGameLanguage] = useState(i18n.language === 'uk' ? 'Ukrainian' : 'English');
+  const [useDefaultCampaign, setUseDefaultCampaign] = useState(true);
 
   const translateRace = (race: string) => t(race.toLowerCase(), race);
   const translateClass = (cls: string) => t(cls.toLowerCase(), cls);
@@ -27,6 +28,7 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
       race,
       class: characterClass,
       language: gameLanguage,
+      useDefaultCampaign,
     });
   };
 
@@ -97,6 +99,40 @@ export default function CharacterCreation({ onCreateCharacter, isLoading }: Char
           <small style={{ display: 'block', marginTop: '4px', opacity: 0.7 }}>
             {t('selectLanguage')}
           </small>
+        </div>
+
+        <div className="form-group">
+          <label>{t('campaignType')}</label>
+          <div className="campaign-type-options">
+            <label className="campaign-type-option">
+              <input
+                type="radio"
+                name="campaignType"
+                value="default"
+                checked={useDefaultCampaign}
+                onChange={() => setUseDefaultCampaign(true)}
+                disabled={isLoading}
+              />
+              <div className="campaign-details">
+                <strong>{t('defaultCampaign')}</strong>
+                <small>{t('defaultCampaignDesc')}</small>
+              </div>
+            </label>
+            <label className="campaign-type-option">
+              <input
+                type="radio"
+                name="campaignType"
+                value="random"
+                checked={!useDefaultCampaign}
+                onChange={() => setUseDefaultCampaign(false)}
+                disabled={isLoading}
+              />
+              <div className="campaign-details">
+                <strong>{t('randomCampaign')}</strong>
+                <small>{t('randomCampaignDesc')}</small>
+              </div>
+            </label>
+          </div>
         </div>
 
         <button type="submit" className="btn-primary" disabled={isLoading}>

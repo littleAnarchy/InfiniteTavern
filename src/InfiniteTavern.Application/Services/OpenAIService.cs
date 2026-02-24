@@ -21,22 +21,41 @@ public class OpenAIService : IAIService
         _apiKey = configuration["OpenAI:ApiKey"] ?? throw new InvalidOperationException("OpenAI API key not configured");
     }
 
-    public async Task<AIResponse> GenerateResponseAsync(string systemPrompt, string userPrompt)
+    public async Task<AIResponse> GenerateResponseAsync(string systemPrompt, string userPrompt, bool useJsonFormat = true)
     {
         try
         {
-            var requestBody = new
+            object requestBody;
+            
+            if (useJsonFormat)
             {
-                model = "gpt-4o-mini",
-                messages = new[]
+                requestBody = new
                 {
-                    new { role = "system", content = systemPrompt },
-                    new { role = "user", content = userPrompt }
-                },
-                temperature = 0.7,
-                max_tokens = 2048,
-                response_format = new { type = "json_object" }
-            };
+                    model = "gpt-4o-mini",
+                    messages = new[]
+                    {
+                        new { role = "system", content = systemPrompt },
+                        new { role = "user", content = userPrompt }
+                    },
+                    temperature = 0.7,
+                    max_tokens = 2048,
+                    response_format = new { type = "json_object" }
+                };
+            }
+            else
+            {
+                requestBody = new
+                {
+                    model = "gpt-4o-mini",
+                    messages = new[]
+                    {
+                        new { role = "system", content = systemPrompt },
+                        new { role = "user", content = userPrompt }
+                    },
+                    temperature = 0.7,
+                    max_tokens = 2048
+                };
+            }
 
             var jsonContent = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
@@ -59,6 +78,19 @@ public class OpenAIService : IAIService
             }
 
             var responseText = openAiResponse.Choices[0].Message.Content;
+
+            // If not using JSON format, return plain text as narrative
+            if (!useJsonFormat)
+            {
+                return new AIResponse
+                {
+                    Narrative = responseText,
+                    Events = new List<GameEvent>(),
+                    NewNpcs = new List<NewNpc>(),
+                    QuestUpdates = new List<QuestUpdate>(),
+                    SkillChecks = new List<SkillCheck>()
+                };
+            }
 
             // Extract JSON from markdown code blocks if present
             responseText = ExtractJsonFromMarkdown(responseText);

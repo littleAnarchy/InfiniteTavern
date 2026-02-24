@@ -21,7 +21,7 @@ public class ClaudeService : IAIService
         _apiKey = configuration["Anthropic:ApiKey"] ?? throw new InvalidOperationException("Anthropic API key not configured");
     }
 
-    public async Task<AIResponse> GenerateResponseAsync(string systemPrompt, string userPrompt)
+    public async Task<AIResponse> GenerateResponseAsync(string systemPrompt, string userPrompt, bool useJsonFormat = true)
     {
         try
         {
@@ -55,6 +55,19 @@ public class ClaudeService : IAIService
             }
 
             var responseText = claudeApiResponse.Content[0].Text;
+
+            // If not using JSON format, return plain text as narrative
+            if (!useJsonFormat)
+            {
+                return new AIResponse
+                {
+                    Narrative = responseText,
+                    Events = new List<GameEvent>(),
+                    NewNpcs = new List<NewNpc>(),
+                    QuestUpdates = new List<QuestUpdate>(),
+                    SkillChecks = new List<SkillCheck>()
+                };
+            }
 
             // Extract JSON from markdown code blocks if present
             responseText = ExtractJsonFromMarkdown(responseText);
