@@ -1,0 +1,113 @@
+### Infinite Tavern API Examples
+### Use with REST Client extension in VS Code
+
+@baseUrl = http://localhost:5000/api/game
+@gameSessionId = replace-with-actual-game-session-id
+
+###
+# Health Check
+GET {{baseUrl}}/health
+
+###
+# Create New Game
+POST {{baseUrl}}/new-game
+Content-Type: application/json
+
+{
+  "playerName": "Alice",
+  "characterName": "Thorin Ironforge",
+  "race": "Dwarf",
+  "class": "Warrior"
+}
+
+###
+# Example: Create Elf Mage
+POST {{baseUrl}}/new-game
+Content-Type: application/json
+
+{
+  "playerName": "Bob",
+  "characterName": "Elara Moonwhisper",
+  "race": "Elf",
+  "class": "Mage"
+}
+
+###
+# Process Turn - Introduce yourself
+POST {{baseUrl}}/turn
+Content-Type: application/json
+
+{
+  "gameSessionId": "{{gameSessionId}}",
+  "playerAction": "I approach the tavern keeper and introduce myself"
+}
+
+###
+# Process Turn - Ask about rumors
+POST {{baseUrl}}/turn
+Content-Type: application/json
+
+{
+  "gameSessionId": "{{gameSessionId}}",
+  "playerAction": "I ask Garrick if he's heard any interesting rumors lately"
+}
+
+###
+# Process Turn - Explore the tavern
+POST {{baseUrl}}/turn
+Content-Type: application/json
+
+{
+  "gameSessionId": "{{gameSessionId}}",
+  "playerAction": "I look around the tavern, examining the other patrons and the decor"
+}
+
+###
+# Process Turn - Order a drink
+POST {{baseUrl}}/turn
+Content-Type: application/json
+
+{
+  "gameSessionId": "{{gameSessionId}}",
+  "playerAction": "I order a mug of ale and sit down at a table near the fireplace"
+}
+
+###
+# Process Turn - Leave tavern
+POST {{baseUrl}}/turn
+Content-Type: application/json
+
+{
+  "gameSessionId": "{{gameSessionId}}",
+  "playerAction": "I thank Garrick and step outside to explore the town"
+}
+
+###
+# Process Turn - Combat scenario
+POST {{baseUrl}}/turn
+Content-Type: application/json
+
+{
+  "gameSessionId": "{{gameSessionId}}",
+  "playerAction": "I draw my weapon and attack the goblin"
+}
+
+###
+# Process Turn - Investigate
+POST {{baseUrl}}/turn
+Content-Type: application/json
+
+{
+  "gameSessionId": "{{gameSessionId}}",
+  "playerAction": "I carefully examine the strange runes on the wall, trying to decipher their meaning"
+}
+
+###
+# Process Turn - Social interaction
+POST {{baseUrl}}/turn
+Content-Type: application/json
+
+{
+  "gameSessionId": "{{gameSessionId}}",
+  "playerAction": "I attempt to persuade the guard to let me pass, explaining my important quest"
+}
