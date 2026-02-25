@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GameState } from '../types/game';
 import { useTranslation } from 'react-i18next';
 import PlayerStats from './PlayerStats';
@@ -15,6 +15,12 @@ export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
   const { t } = useTranslation();
   const [action, setAction] = useState('');
   const [leftTab, setLeftTab] = useState<'stats' | 'inventory'>('stats');
+
+  useEffect(() => {
+    if (gameState.isInCombat) {
+      setLeftTab('stats');
+    }
+  }, [gameState.isInCombat]);
 
   console.log('GameView - isInCombat:', gameState.isInCombat, 'enemies:', gameState.enemies);
 
@@ -44,40 +50,47 @@ export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
 
       <div className={`game-layout ${gameState.isInCombat ? 'in-combat' : ''}`}>
         <aside className="sidebar">
-          <div className={`sidebar-flip-card ${leftTab === 'inventory' ? 'is-flipped' : ''}`}>
-            <div className="sidebar-flip-inner">
-              <div className="sidebar-face sidebar-face-front">
-                <div className="face-content">
-                  <button
-                    type="button"
-                    className="face-toggle-button"
-                    aria-label={`${t('inventory')}`}
-                    onClick={() => setLeftTab('inventory')}
-                  >
-                    <span className="face-toggle-icon">↻</span>
-                  </button>
-                  <PlayerStats
-                    stats={gameState.playerStats}
-                    currentLocation={gameState.currentLocation}
-                  />
+          {gameState.isInCombat ? (
+            <div className={`sidebar-flip-card ${leftTab === 'inventory' ? 'is-flipped' : ''}`}>
+              <div className="sidebar-flip-inner">
+                <div className="sidebar-face sidebar-face-front">
+                  <div className="face-content">
+                    <button
+                      type="button"
+                      className="face-toggle-button"
+                      aria-label={`${t('inventory')}`}
+                      onClick={() => setLeftTab('inventory')}
+                    >
+                      <span className="face-toggle-icon">↻</span>
+                    </button>
+                    <PlayerStats
+                      stats={gameState.playerStats}
+                      currentLocation={gameState.currentLocation}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="sidebar-face sidebar-face-back">
-                <div className="face-content">
-                  <button
-                    type="button"
-                    className="face-toggle-button"
-                    aria-label={`${t('stats')}`}
-                    onClick={() => setLeftTab('stats')}
-                  >
-                    <span className="face-toggle-icon">↺</span>
-                  </button>
-                  <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} />
+                <div className="sidebar-face sidebar-face-back">
+                  <div className="face-content">
+                    <button
+                      type="button"
+                      className="face-toggle-button"
+                      aria-label={`${t('stats')}`}
+                      onClick={() => setLeftTab('stats')}
+                    >
+                      <span className="face-toggle-icon">↺</span>
+                    </button>
+                    <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} hideTitle />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <PlayerStats
+              stats={gameState.playerStats}
+              currentLocation={gameState.currentLocation}
+            />
+          )}
         </aside>
 
         <main className="main-content">
@@ -120,11 +133,13 @@ export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
           {gameState.error && <div className="error-message">{gameState.error}</div>}
         </main>
 
-        {gameState.isInCombat && (
-          <aside className="sidebar sidebar-right">
+        <aside className="sidebar sidebar-right">
+          {gameState.isInCombat ? (
             <EnemyList enemies={gameState.enemies} />
-          </aside>
-        )}
+          ) : (
+            <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} />
+          )}
+        </aside>
       </div>
     </div>
   );

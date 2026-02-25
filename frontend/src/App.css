@@ -168,7 +168,7 @@ button:disabled {
 
 .game-layout {
   display: grid;
-  grid-template-columns: 280px minmax(0, 760px);
+  grid-template-columns: 280px minmax(0, 700px) 280px;
   gap: 20px;
   justify-content: center;
   align-content: start;

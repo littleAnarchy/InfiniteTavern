@@ -5,9 +5,10 @@ import './Inventory.css';
 interface InventoryProps {
   inventory: Item[];
   gold: number;
+  hideTitle?: boolean;
 }
 
-export default function Inventory({ inventory, gold }: InventoryProps) {
+export default function Inventory({ inventory, gold, hideTitle }: InventoryProps) {
   const { t } = useTranslation();
 
   const getItemIcon = (type: string) => {
@@ -30,7 +31,13 @@ export default function Inventory({ inventory, gold }: InventoryProps) {
 
   return (
     <div className="inventory">
-      <div className="inventory-header">
+      <div className={`inventory-header ${hideTitle ? 'inventory-header--no-title' : ''}`}>
+        {!hideTitle && (
+          <div className="inventory-title">
+            <span className="inventory-title-icon">💼</span>
+            <span className="inventory-title-text">{t('inventory')}</span>
+          </div>
+        )}
         <div className="gold-display">
           <span className="gold-icon">💰</span>
           <span className="gold-amount">{gold}</span>

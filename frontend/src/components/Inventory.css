@@ -1,7 +1,7 @@
 .inventory {
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -9,12 +9,31 @@
 
 .inventory-header {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
-  padding-right: 2.5rem;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.inventory-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inventory-title-icon {
+  font-size: 1.25rem;
+}
+
+.inventory-title-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.inventory-header--no-title {
+  justify-content: flex-start;
 }
 
 .gold-display {
