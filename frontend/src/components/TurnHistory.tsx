@@ -9,7 +9,7 @@ interface TurnHistoryProps {
 
 export default function TurnHistory({ history, isLoading }: TurnHistoryProps) {
   const { t } = useTranslation();
-  
+
   return (
     <div className="turn-history">
       {history.length === 0 && !isLoading && (

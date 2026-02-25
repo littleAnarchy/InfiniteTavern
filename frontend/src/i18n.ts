@@ -3,22 +3,20 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en';
 import uk from './locales/uk';
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: {
-        translation: en,
-      },
-      uk: {
-        translation: uk,
-      },
+i18n.use(initReactI18next).init({
+  resources: {
+    en: {
+      translation: en,
     },
-    lng: localStorage.getItem('locale') || 'uk',
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false, // React already escapes values
+    uk: {
+      translation: uk,
     },
-  });
+  },
+  lng: localStorage.getItem('locale') || 'uk',
+  fallbackLng: 'en',
+  interpolation: {
+    escapeValue: false, // React already escapes values
+  },
+});
 
 export default i18n;

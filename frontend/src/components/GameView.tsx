@@ -57,38 +57,45 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
           </div>
 
           <form onSubmit={handleSubmit} className="action-form">
-            <div className='action-panel'>
+            <div className="action-panel">
               <input
-              type="text"
-              value={action}
-              onChange={(e) => setAction(e.target.value)}
-              placeholder={t('whatDoYouDo')}
-              disabled={gameState.isLoading}
-              className="action-input"
-            />
-            <button type="submit" disabled={gameState.isLoading || !action.trim()} className="btn-primary">
-              {gameState.isLoading ? '...' : t('act')}
-            </button>
+                type="text"
+                value={action}
+                onChange={(e) => setAction(e.target.value)}
+                placeholder={t('whatDoYouDo')}
+                disabled={gameState.isLoading}
+                className="action-input"
+              />
+              <button
+                type="submit"
+                disabled={gameState.isLoading || !action.trim()}
+                className="btn-primary"
+              >
+                {gameState.isLoading ? '...' : t('act')}
+              </button>
             </div>
-                <div className="suggested-actions-buttons">
-                {gameState.suggestedActions.map((suggestedAction, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleSuggestedAction(suggestedAction)}
-                    disabled={gameState.isLoading}
-                    className="btn-suggested"
-                  >
-                    {suggestedAction}
-                  </button>
-                ))}
-              </div>
+            <div className="suggested-actions-buttons">
+              {gameState.suggestedActions.map((suggestedAction, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSuggestedAction(suggestedAction)}
+                  disabled={gameState.isLoading}
+                  className="btn-suggested"
+                >
+                  {suggestedAction}
+                </button>
+              ))}
+            </div>
           </form>
 
           {gameState.error && <div className="error-message">{gameState.error}</div>}
         </main>
 
         <aside className="sidebar sidebar-right">
-          <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} />
+          <Inventory
+            inventory={gameState.playerStats.inventory}
+            gold={gameState.playerStats.gold}
+          />
         </aside>
       </div>
     </div>

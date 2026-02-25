@@ -23,7 +23,7 @@ function App() {
 
     try {
       const response = await gameService.createNewGame(request);
-      
+
       setGameState({
         sessionId: response.gameSessionId,
         playerStats: response.playerStats,
@@ -65,12 +65,12 @@ function App() {
       setGameState((prev) => ({
         ...prev,
         playerStats: prev.playerStats
-          ? { 
-              ...prev.playerStats, 
-              hp: response.playerHP, 
+          ? {
+              ...prev.playerStats,
+              hp: response.playerHP,
               maxHP: response.maxPlayerHP,
               inventory: response.inventory,
-              gold: response.gold
+              gold: response.gold,
             }
           : null,
         currentLocation: response.currentLocation,
@@ -113,9 +113,16 @@ function App() {
   return (
     <div className="app">
       {!gameState.sessionId ? (
-        <CharacterCreation onCreateCharacter={handleCreateCharacter} isLoading={gameState.isLoading} />
+        <CharacterCreation
+          onCreateCharacter={handleCreateCharacter}
+          isLoading={gameState.isLoading}
+        />
       ) : (
-        <GameView gameState={gameState} onSubmitAction={handleSubmitAction} onNewGame={handleNewGame} />
+        <GameView
+          gameState={gameState}
+          onSubmitAction={handleSubmitAction}
+          onNewGame={handleNewGame}
+        />
       )}
     </div>
   );

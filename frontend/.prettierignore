@@ -1,0 +1,16 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+.vite
+
+# Misc
+*.log
+.DS_Store
+coverage
+.env
+.env.local
+.env.production.local
+.env.development.local

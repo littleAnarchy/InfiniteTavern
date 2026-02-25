@@ -10,12 +10,17 @@ interface CharacterCreationProps {
 const RACES = ['Human', 'Elf', 'Dwarf', 'Orc', 'Halfling'];
 const CLASSES = ['Warrior', 'Wizard', 'Rogue', 'Cleric', 'Ranger'];
 
-export default function CharacterCreation({ onCreateCharacter, isLoading }: CharacterCreationProps) {
+export default function CharacterCreation({
+  onCreateCharacter,
+  isLoading,
+}: CharacterCreationProps) {
   const { t, i18n } = useTranslation();
   const [characterName, setCharacterName] = useState('');
   const [race, setRace] = useState(RACES[0]);
   const [characterClass, setCharacterClass] = useState(CLASSES[0]);
-  const [gameLanguage, setGameLanguage] = useState(i18n.language === 'uk' ? 'Ukrainian' : 'English');
+  const [gameLanguage, setGameLanguage] = useState(
+    i18n.language === 'uk' ? 'Ukrainian' : 'English'
+  );
   const [useDefaultCampaign, setUseDefaultCampaign] = useState(true);
 
   const translateRace = (race: string) => t(race.toLowerCase(), race);

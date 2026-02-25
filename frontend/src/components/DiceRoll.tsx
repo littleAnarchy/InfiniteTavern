@@ -24,7 +24,7 @@ export default function DiceRoll({ roll, onAnimationComplete }: DiceRollProps) {
       clearInterval(rollInterval);
       setDisplayNumber(roll.diceRoll);
       setIsRolling(false);
-      
+
       // Call callback after animation completes
       if (onAnimationComplete) {
         setTimeout(onAnimationComplete, 500);

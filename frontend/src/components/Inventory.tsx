@@ -45,22 +45,15 @@ export default function Inventory({ inventory, gold }: InventoryProps) {
           </div>
         ) : (
           inventory.map((item, index) => (
-            <div
-              key={index}
-              className={`inventory-item ${item.isEquipped ? 'equipped' : ''}`}
-            >
+            <div key={index} className={`inventory-item ${item.isEquipped ? 'equipped' : ''}`}>
               <div className="item-icon">{getItemIcon(item.type)}</div>
               <div className="item-details">
                 <div className="item-header">
                   <span className="item-name">
                     {item.name}
-                    {item.quantity > 1 && (
-                      <span className="item-quantity"> x{item.quantity}</span>
-                    )}
+                    {item.quantity > 1 && <span className="item-quantity"> x{item.quantity}</span>}
                   </span>
-                  {item.isEquipped && (
-                    <span className="equipped-badge">{t('equipped')}</span>
-                  )}
+                  {item.isEquipped && <span className="equipped-badge">{t('equipped')}</span>}
                 </div>
                 <div className="item-type">{getItemTypeTranslation(item.type)}</div>
                 <div className="item-description">{item.description}</div>
