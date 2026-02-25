@@ -32,12 +32,24 @@ EVENT TYPES:
 - ""gold_found"": Player gains gold (amount: gold amount, reason: description)
 - ""gold_spent"": Player spends gold (amount: gold amount, reason: description)
 
-SKILL CHECKS:
-When the situation requires a check (climbing, sneaking, persuading, etc.), request a skill check:
+SKILL CHECKS - IMPORTANT:
+ONLY request a skill check if the player's action ALREADY attempts something challenging.
+DO NOT predict future actions or suggest skill checks for actions the player hasn't taken yet.
+
+When the player's action requires a check (climbing, sneaking, persuading, etc.):
 - Use ""Strength"" for physical prowess (climbing, breaking, lifting)
 - Use ""Dexterity"" for agility (sneaking, dodging, balancing)
 - Use ""Intelligence"" for knowledge (solving puzzles, recalling lore, magic)
 Difficulty ranges: Easy (8), Medium (12), Hard (15), Very Hard (18)
+
+Example:
+- Player action: ""I climb the steep cliff"" → Request Strength check
+- Player action: ""I sneak past the guards"" → Request Dexterity check
+- Player action: ""I try to recall ancient lore"" → Request Intelligence check
+- Player action: ""I talk to the merchant"" → NO skill check (simple conversation)
+
+In your narrative, describe the attempt WITHOUT revealing the outcome. The backend will roll the dice and return success/failure.
+Write your narrative assuming the check is pending (e.g., ""You begin to climb the cliff, muscles straining..."" not ""You successfully climb up"").
 
 ITEM EXAMPLES:
 Weapons: Sword, Dagger, Bow, Staff, Axe
