@@ -42,14 +42,16 @@ When the player's action requires a check (climbing, sneaking, persuading, etc.)
 - Use ""Intelligence"" for knowledge (solving puzzles, recalling lore, magic)
 Difficulty ranges: Easy (8), Medium (12), Hard (15), Very Hard (18)
 
-Example:
-- Player action: ""I climb the steep cliff"" → Request Strength check
-- Player action: ""I sneak past the guards"" → Request Dexterity check
-- Player action: ""I try to recall ancient lore"" → Request Intelligence check
-- Player action: ""I talk to the merchant"" → NO skill check (simple conversation)
+CRITICAL: If you request a skill check, DO NOT include events that depend on the check's outcome in your response.
+The backend will roll the dice, then you'll generate the consequences separately.
+
+Examples:
+- ✅ CORRECT: ""You examine the locked chest... (skill check requested)"" → events: [] (no events yet)
+- ❌ WRONG: ""You examine the chest... (skill check requested)"" → events: [item_found: treasure] (don't assume success!)
+- ✅ CORRECT: ""A goblin attacks you!"" → events: [damage: 3] (this happened regardless of any check)
 
 In your narrative, describe the attempt WITHOUT revealing the outcome. The backend will roll the dice and return success/failure.
-Write your narrative assuming the check is pending (e.g., ""You begin to climb the cliff, muscles straining..."" not ""You successfully climb up"").
+Write your narrative assuming the check is pending (e.g., ""You begin to examine the chest, searching for clues..."" not ""You successfully open it"").
 
 ITEM EXAMPLES:
 Weapons: Sword, Dagger, Bow, Staff, Axe
@@ -164,6 +166,42 @@ Return your response IN JSON FORMAT:
 {0}";
 
     /// <summary>
+    /// System prompt for generating skill check outcomes.
+    /// </summary>
+    public static string SkillCheckOutcomeSystemPrompt => @"You are the Dungeon Master describing the outcome of a skill check.
+
+{0}
+
+The player attempted an action and dice were rolled. Based on the result, describe what happens.
+
+For SUCCESS:
+- Describe how the player succeeds at their task
+- Make it feel rewarding and impactful
+- Include appropriate events (item_found, gold_found, etc.) if success would logically grant rewards
+- Examples: Opening chest → item_found, Searching room → gold_found, Recalling lore → no event (just info)
+
+For FAILURE:
+- Describe how the player fails
+- Include appropriate consequences (falling, being noticed, etc.)
+- Suggest events like damage if failure would logically cause harm
+- Examples: Failed climbing → damage, Failed sneaking → no event (just noticed), Failed puzzle → no event
+
+Keep it brief (2-4 sentences). Return ONLY valid JSON.
+
+RESPONSE FORMAT:
+{{
+  ""narrative"": ""Brief description of what happens..."",
+  ""events"": [
+    {{
+      ""type"": ""damage"" or ""item_found"" or ""gold_found"" etc.,
+      ""target"": ""player"",
+      ""amount"": 3,
+      ""reason"": ""Fell while climbing"" or ""Ancient treasure"" etc.
+    }}
+  ]
+}}";
+
+    /// <summary>
     /// Gets the default fallback opening narrative.
     /// </summary>
     public static string GetDefaultOpeningNarrative(string playerName, string race, string className, string language)
@@ -220,5 +258,27 @@ Starting equipment:
 Create an immersive, ORIGINAL opening scene that incorporates the character's race, class, and personality.
 Make it unique and memorable - different from other adventures!
 Include 3 contextually relevant action options.";
+    }
+
+    /// <summary>
+    /// Builds the user prompt for skill check outcome generation.
+    /// </summary>
+    public static string BuildSkillCheckOutcomeUserPrompt(
+        string playerAction,
+        string attribute,
+        int difficulty,
+        int diceRoll,
+        int modifier,
+        int total,
+        bool success)
+    {
+        var resultText = success ? "SUCCESS" : "FAILURE";
+        
+        return $@"Player action: {playerAction}
+Skill check: {attribute} (DC {difficulty})
+Player rolled: {diceRoll} + {modifier} = {total}
+Result: {resultText}
+
+Describe what happens as a consequence of this {resultText.ToLower()}.";
     }
 }

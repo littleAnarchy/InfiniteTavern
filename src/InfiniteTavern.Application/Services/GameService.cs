@@ -263,15 +263,28 @@ public class GameService : IGameService
             }
         }
 
-        // Process skill checks
+        // Process skill checks and generate outcomes
         var diceRolls = new List<DiceRollResult>();
+        var skillCheckNarratives = new List<string>();
+        
         foreach (var skillCheck in aiResponse.SkillChecks)
         {
             var rollResult = ProcessSkillCheck(session.PlayerCharacter, skillCheck);
             diceRolls.Add(rollResult);
 
+            // Add skill check result first
             var successText = rollResult.Success ? "succeeded" : "failed";
             appliedEvents.Add($"Skill check ({skillCheck.Attribute}): {successText}!");
+
+            // Generate narrative outcome based on roll result
+            var outcome = await GenerateSkillCheckOutcomeAsync(session, rollResult, request.PlayerAction);
+            skillCheckNarratives.Add(outcome.Narrative);
+
+            // Then apply outcome events (e.g., damage from falling)
+            foreach (var outcomeEvent in outcome.Events)
+            {
+                _eventHandler.ApplyEvent(session, outcomeEvent, appliedEvents);
+            }
         }
 
         // Increment turn number
@@ -299,9 +312,16 @@ public class GameService : IGameService
         _logger.LogInformation("Processed turn {TurnNumber} for session {SessionId}",
             session.TurnNumber, session.Id);
 
+        // Combine main narrative with skill check outcomes
+        var fullNarrative = aiResponse.Narrative;
+        if (skillCheckNarratives.Any())
+        {
+            fullNarrative += "\n\n" + string.Join("\n\n", skillCheckNarratives);
+        }
+
         return new TurnResponse
         {
-            Narrative = aiResponse.Narrative,
+            Narrative = fullNarrative,
             PlayerHP = session.PlayerCharacter.HP,
             MaxPlayerHP = session.PlayerCharacter.MaxHP,
             CurrentLocation = session.CurrentLocation,
@@ -353,6 +373,39 @@ public class GameService : IGameService
             Success = success,
             Purpose = skillCheck.Purpose
         };
+    }
+
+    private async Task<(string Narrative, List<GameEvent> Events)> GenerateSkillCheckOutcomeAsync(
+        GameSession session,
+        DiceRollResult rollResult,
+        string playerAction)
+    {
+        var languageInstruction = PromptTemplates.GetLanguageInstruction(session.Language);
+        var systemPrompt = string.Format(PromptTemplates.SkillCheckOutcomeSystemPrompt, languageInstruction);
+        
+        var modifier = (rollResult.AttributeValue - 10) / 2;
+        var userPrompt = PromptTemplates.BuildSkillCheckOutcomeUserPrompt(
+            playerAction,
+            rollResult.Attribute,
+            rollResult.Difficulty,
+            rollResult.DiceRoll,
+            modifier,
+            rollResult.Total,
+            rollResult.Success);
+
+        try
+        {
+            var response = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt, useJsonFormat: true);
+            return (response.Narrative, response.Events);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to generate skill check outcome");
+            var fallbackNarrative = rollResult.Success
+                ? $"You manage to {rollResult.Purpose.ToLower()} successfully!"
+                : $"You fail to {rollResult.Purpose.ToLower()}.";
+            return (fallbackNarrative, new List<GameEvent>());
+        }
     }
 
     private async Task GenerateSummaryAsync(GameSession session)

@@ -36,6 +36,14 @@ export default function TurnHistory({ history, isLoading }: TurnHistoryProps) {
             <p>{entry.narrative}</p>
           </div>
 
+          {entry.diceRolls && entry.diceRolls.length > 0 && (
+            <div className="dice-rolls">
+              {entry.diceRolls.map((roll, rollIndex) => (
+                <DiceRoll key={rollIndex} roll={roll} />
+              ))}
+            </div>
+          )}
+
           {entry.events.length > 0 && (
             <div className="events">
               {entry.events.map((event, eventIndex) => (
@@ -43,14 +51,6 @@ export default function TurnHistory({ history, isLoading }: TurnHistoryProps) {
                   <span className="event-icon">⚡</span>
                   <span>{event}</span>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {entry.diceRolls && entry.diceRolls.length > 0 && (
-            <div className="dice-rolls">
-              {entry.diceRolls.map((roll, rollIndex) => (
-                <DiceRoll key={rollIndex} roll={roll} />
               ))}
             </div>
           )}
