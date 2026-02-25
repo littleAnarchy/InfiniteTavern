@@ -17,6 +17,8 @@ public class TurnResponse
     public int Gold { get; set; }
     public List<DiceRollResult> DiceRolls { get; set; } = new();
     public List<string> SuggestedActions { get; set; } = new();
+    public bool IsInCombat { get; set; }
+    public List<EnemyDto> Enemies { get; set; } = new();
 }
 
 public class DiceRollResult
@@ -70,4 +72,13 @@ public class ItemDto
     public int Quantity { get; set; }
     public bool IsEquipped { get; set; }
     public Dictionary<string, int> Bonuses { get; set; } = new();
+}
+
+public class EnemyDto
+{
+    public string Name { get; set; } = string.Empty;
+    public int HP { get; set; }
+    public int MaxHP { get; set; }
+    public bool IsAlive { get; set; }
+    public string Description { get; set; } = string.Empty;
 }

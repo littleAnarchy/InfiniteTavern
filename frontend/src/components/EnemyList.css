@@ -1,0 +1,68 @@
+.enemy-list {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #1e1e1e;
+  border-radius: 0.5rem;
+  border: 2px solid #dc2626;
+}
+
+.enemy-list h3 {
+  margin: 0 0 1rem 0;
+  color: #dc2626;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.enemy-card {
+  background-color: #2a2a2a;
+  border: 1px solid #dc2626;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.enemy-card:last-child {
+  margin-bottom: 0;
+}
+
+.enemy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.enemy-name {
+  font-weight: bold;
+  color: #f5f5f5;
+  font-size: 1rem;
+}
+
+.enemy-hp {
+  color: #dc2626;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.enemy-hp-bar {
+  width: 100%;
+  height: 0.5rem;
+  background-color: #404040;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.enemy-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #dc2626, #f87171);
+  transition: width 0.3s ease;
+}
+
+.enemy-description {
+  margin: 0.5rem 0 0 0;
+  color: #a0a0a0;
+  font-size: 0.85rem;
+  font-style: italic;
+}

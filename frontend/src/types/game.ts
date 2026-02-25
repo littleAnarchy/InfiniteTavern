@@ -22,6 +22,14 @@ export interface Item {
   bonuses: Record<string, number>;
 }
 
+export interface Enemy {
+  name: string;
+  hp: number;
+  maxHP: number;
+  isAlive: boolean;
+  description: string;
+}
+
 export interface PlayerStats {
   name: string;
   race: string;
@@ -53,6 +61,8 @@ export interface TurnResponse {
   gold: number;
   diceRolls: DiceRollResult[];
   suggestedActions: string[];
+  isInCombat: boolean;
+  enemies: Enemy[];
 }
 
 export interface DiceRollResult {
@@ -82,4 +92,6 @@ export interface GameState {
   isLoading: boolean;
   error: string | null;
   suggestedActions: string[];
+  isInCombat: boolean;
+  enemies: Enemy[];
 }

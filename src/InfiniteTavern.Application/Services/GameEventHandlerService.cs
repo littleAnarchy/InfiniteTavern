@@ -55,12 +55,38 @@ public class GameEventHandlerService : IGameEventHandlerService
         }
         else
         {
-            var npc = session.Npcs.FirstOrDefault(n =>
-                n.Name.Equals(gameEvent.Target, StringComparison.OrdinalIgnoreCase) && n.IsAlive);
-            if (npc != null)
+            // Check if target is an enemy
+            var enemy = session.Enemies.FirstOrDefault(e =>
+                e.Name.Equals(gameEvent.Target, StringComparison.OrdinalIgnoreCase) && e.IsAlive);
+            
+            if (enemy != null)
             {
-                npc.IsAlive = false;
-                yield return $"{npc.Name} was defeated: {gameEvent.Reason}";
+                enemy.HP = Math.Max(0, enemy.HP - gameEvent.Amount);
+                yield return $"{enemy.Name} took {gameEvent.Amount} damage: {gameEvent.Reason}";
+
+                if (enemy.HP == 0)
+                {
+                    enemy.IsAlive = false;
+                    yield return $"{enemy.Name} was defeated!";
+                    
+                    // Check if combat should end
+                    if (session.Enemies.All(e => !e.IsAlive))
+                    {
+                        session.IsInCombat = false;
+                        yield return "Victory! All enemies defeated!";
+                    }
+                }
+            }
+            else
+            {
+                // Fallback to NPC damage
+                var npc = session.Npcs.FirstOrDefault(n =>
+                    n.Name.Equals(gameEvent.Target, StringComparison.OrdinalIgnoreCase) && n.IsAlive);
+                if (npc != null)
+                {
+                    npc.IsAlive = false;
+                    yield return $"{npc.Name} was defeated: {gameEvent.Reason}";
+                }
             }
         }
     }

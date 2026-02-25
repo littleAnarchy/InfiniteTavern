@@ -67,6 +67,7 @@ export default {
   inventory: 'Інвентар',
   emptyInventory: 'Ваш інвентар порожній',
   equipped: 'Екіпіровано',
+  stats: 'Статистика',
   itemTypeWeapon: 'Зброя',
   itemTypeArmor: 'Обладунки',
   itemTypePotion: 'Зілля',
@@ -76,4 +77,7 @@ export default {
   check: 'Перевірка',
   success: 'Успіх',
   failure: 'Провал',
+
+  // Combat
+  enemies: 'Вороги',
 };

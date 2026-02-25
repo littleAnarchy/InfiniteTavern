@@ -24,6 +24,9 @@ public class AIResponse
     
     [JsonPropertyName("suggested_actions")]
     public List<string> SuggestedActions { get; set; } = new();
+    
+    [JsonPropertyName("enemies")]
+    public List<EnemyResponse> Enemies { get; set; } = new();
 }
 
 public class GameEvent
@@ -81,4 +84,19 @@ public class SkillCheck
     
     [JsonPropertyName("purpose")]
     public string Purpose { get; set; } = string.Empty; // What the check is for
+}
+
+public class EnemyResponse
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+    
+    [JsonPropertyName("hp")]
+    public int HP { get; set; }
+    
+    [JsonPropertyName("maxHP")]
+    public int MaxHP { get; set; }
+    
+    [JsonPropertyName("description")]
+    public string Description { get; set; } = string.Empty;
 }

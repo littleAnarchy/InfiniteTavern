@@ -5,6 +5,7 @@ import PlayerStats from './PlayerStats';
 import TurnHistory from './TurnHistory';
 import LanguageSwitcher from './LanguageSwitcher';
 import Inventory from './Inventory';
+import EnemyList from './EnemyList';
 
 interface GameViewProps {
   gameState: GameState;
@@ -15,6 +16,9 @@ interface GameViewProps {
 export default function GameView({ gameState, onSubmitAction, onNewGame }: GameViewProps) {
   const { t } = useTranslation();
   const [action, setAction] = useState('');
+  const [leftTab, setLeftTab] = useState<'stats' | 'inventory'>('stats');
+
+  console.log('GameView - isInCombat:', gameState.isInCombat, 'enemies:', gameState.enemies);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,9 +50,33 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
         </div>
       </div>
 
-      <div className="game-layout">
+      <div className={`game-layout ${gameState.isInCombat ? 'in-combat' : ''}`}>
         <aside className="sidebar">
-          <PlayerStats stats={gameState.playerStats} currentLocation={gameState.currentLocation} />
+          <div className="sidebar-tabs">
+            <button
+              className={`tab-button ${leftTab === 'stats' ? 'active' : ''}`}
+              onClick={() => setLeftTab('stats')}
+            >
+              📊 {t('stats')}
+            </button>
+            <button
+              className={`tab-button ${leftTab === 'inventory' ? 'active' : ''}`}
+              onClick={() => setLeftTab('inventory')}
+            >
+              💼 {t('inventory')}
+            </button>
+          </div>
+          
+          <div className="sidebar-content">
+            {leftTab === 'stats' ? (
+              <PlayerStats stats={gameState.playerStats} currentLocation={gameState.currentLocation} />
+            ) : (
+              <Inventory
+                inventory={gameState.playerStats.inventory}
+                gold={gameState.playerStats.gold}
+              />
+            )}
+          </div>
         </aside>
 
         <main className="main-content">
@@ -91,12 +119,11 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
           {gameState.error && <div className="error-message">{gameState.error}</div>}
         </main>
 
-        <aside className="sidebar sidebar-right">
-          <Inventory
-            inventory={gameState.playerStats.inventory}
-            gold={gameState.playerStats.gold}
-          />
-        </aside>
+        {gameState.isInCombat && (
+          <aside className="sidebar sidebar-right">
+            <EnemyList enemies={gameState.enemies} />
+          </aside>
+        )}
       </div>
     </div>
   );

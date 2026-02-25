@@ -16,6 +16,8 @@ function App() {
     isLoading: false,
     error: null,
     suggestedActions: [],
+    isInCombat: false,
+    enemies: [],
   });
 
   const handleCreateCharacter = async (request: NewGameRequest) => {
@@ -39,6 +41,8 @@ function App() {
         isLoading: false,
         error: null,
         suggestedActions: response.suggestedActions || [],
+        isInCombat: false,
+        enemies: [],
       });
     } catch (error) {
       setGameState((prev) => ({
@@ -61,6 +65,10 @@ function App() {
       };
 
       const response = await gameService.processTurn(request);
+
+      console.log('Turn response:', response);
+      console.log('Combat state:', response.isInCombat);
+      console.log('Enemies:', response.enemies);
 
       setGameState((prev) => ({
         ...prev,
@@ -86,6 +94,8 @@ function App() {
         ],
         isLoading: false,
         suggestedActions: response.suggestedActions || [],
+        isInCombat: response.isInCombat,
+        enemies: response.enemies,
       }));
     } catch (error) {
       setGameState((prev) => ({
@@ -106,6 +116,8 @@ function App() {
         isLoading: false,
         error: null,
         suggestedActions: [],
+        isInCombat: false,
+        enemies: [],
       });
     }
   };

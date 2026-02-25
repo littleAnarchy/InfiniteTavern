@@ -15,6 +15,10 @@ public class GameSession
     public int TurnNumber { get; set; }
     public DateTime CreatedAt { get; set; }
 
+    // Combat state
+    public bool IsInCombat { get; set; } = false;
+    public List<Enemy> Enemies { get; set; } = new();
+
     // Embedded documents (not separate collections!)
     public PlayerCharacter? PlayerCharacter { get; set; }
     public List<Npc> Npcs { get; set; } = new();

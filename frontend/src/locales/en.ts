@@ -67,6 +67,7 @@ export default {
   inventory: 'Inventory',
   emptyInventory: 'Your inventory is empty',
   equipped: 'Equipped',
+  stats: 'Stats',
   itemTypeWeapon: 'Weapon',
   itemTypeArmor: 'Armor',
   itemTypePotion: 'Potion',
@@ -76,4 +77,7 @@ export default {
   check: 'Check',
   success: 'Success',
   failure: 'Failure',
+
+  // Combat
+  enemies: 'Enemies',
 };

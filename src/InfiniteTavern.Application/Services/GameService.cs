@@ -210,7 +210,9 @@ public class GameService : IGameService
             .ToList();
 
         // Build prompts
-        var systemPrompt = _promptBuilder.BuildSystemPrompt(session.Language);
+        var systemPrompt = session.IsInCombat 
+            ? _promptBuilder.BuildSystemPromptForCombat(session.Language)
+            : _promptBuilder.BuildSystemPrompt(session.Language);
         var userPrompt = _promptBuilder.BuildUserPrompt(
             session,
             session.PlayerCharacter,
@@ -252,6 +254,45 @@ public class GameService : IGameService
             appliedEvents.Add($"Met new NPC: {newNpc.Name}");
         }
 
+        // Handle enemies (combat)
+        if (aiResponse.Enemies.Any())
+        {
+            // Update or create enemies
+            foreach (var enemyResponse in aiResponse.Enemies)
+            {
+                var existingEnemy = session.Enemies.FirstOrDefault(e => 
+                    e.Name.Equals(enemyResponse.Name, StringComparison.OrdinalIgnoreCase));
+                
+                if (existingEnemy != null)
+                {
+                    // Update existing enemy
+                    existingEnemy.HP = enemyResponse.HP;
+                    existingEnemy.MaxHP = enemyResponse.MaxHP;
+                    existingEnemy.Description = enemyResponse.Description;
+                    existingEnemy.IsAlive = enemyResponse.HP > 0;
+                }
+                else
+                {
+                    // Add new enemy
+                    session.Enemies.Add(new Enemy
+                    {
+                        Name = enemyResponse.Name,
+                        HP = enemyResponse.HP,
+                        MaxHP = enemyResponse.MaxHP,
+                        Description = enemyResponse.Description,
+                        IsAlive = enemyResponse.HP > 0
+                    });
+                }
+            }
+
+            // Enter combat if not already in combat and there are alive enemies
+            if (!session.IsInCombat && session.Enemies.Any(e => e.IsAlive))
+            {
+                session.IsInCombat = true;
+                appliedEvents.Add("Combat started!");
+            }
+        }
+
         // Update quests
         foreach (var questUpdate in aiResponse.QuestUpdates)
         {
@@ -284,6 +325,32 @@ public class GameService : IGameService
             foreach (var outcomeEvent in outcome.Events)
             {
                 _eventHandler.ApplyEvent(session, outcomeEvent, appliedEvents);
+            }
+        }
+
+        // Handle enemy counterattacks in combat
+        if (session.IsInCombat && session.PlayerCharacter.HP > 0)
+        {
+            var aliveEnemies = session.Enemies.Where(e => e.IsAlive).ToList();
+            foreach (var enemy in aliveEnemies)
+            {
+                // Each enemy attacks
+                var damage = _diceService.Roll("1d6") + 2; // Base enemy damage
+                var damageEvent = new GameEvent
+                {
+                    Type = "damage",
+                    Target = "player",
+                    Amount = damage,
+                    Reason = $"{enemy.Name} counterattack"
+                };
+                _eventHandler.ApplyEvent(session, damageEvent, appliedEvents);
+
+                // Check if player died
+                if (session.PlayerCharacter.HP == 0)
+                {
+                    session.IsInCombat = false;
+                    break;
+                }
             }
         }
 
@@ -337,7 +404,16 @@ public class GameService : IGameService
             }).ToList(),
             Gold = session.PlayerCharacter.Gold,
             DiceRolls = diceRolls,
-            SuggestedActions = aiResponse.SuggestedActions
+            SuggestedActions = aiResponse.SuggestedActions,
+            IsInCombat = session.IsInCombat,
+            Enemies = session.Enemies.Select(e => new EnemyDto
+            {
+                Name = e.Name,
+                HP = e.HP,
+                MaxHP = e.MaxHP,
+                IsAlive = e.IsAlive,
+                Description = e.Description
+            }).ToList()
         };
     }
 
