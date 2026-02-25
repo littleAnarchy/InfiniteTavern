@@ -73,7 +73,7 @@ public class GameService : IGameService
         };
 
         // Generate opening story with AI
-        var openingStory = await GenerateOpeningStoryAsync(playerCharacter, request.Language, request.UseDefaultCampaign);
+        var (openingStory, suggestedActions) = await GenerateOpeningStoryAsync(playerCharacter, request.Language, request.UseDefaultCampaign);
 
         var tavernKeeper = new Npc
         {
@@ -136,20 +136,27 @@ public class GameService : IGameService
                     Bonuses = i.Bonuses
                 }).ToList(),
                 Gold = playerCharacter.Gold
-            }
+            },
+            SuggestedActions = suggestedActions
         };
     }
 
-    private async Task<string> GenerateOpeningStoryAsync(PlayerCharacter player, string language, bool useDefault)
+    private async Task<(string narrative, List<string> suggestedActions)> GenerateOpeningStoryAsync(PlayerCharacter player, string language, bool useDefault)
     {
         var isUkrainian = language.Equals("Ukrainian", StringComparison.OrdinalIgnoreCase);
 
-        // If using default campaign, return fallback immediately
+        // If using default campaign, return fallback immediately with hardcoded actions
         if (useDefault)
         {
-            return isUkrainian
+            var narrative = isUkrainian
                 ? $"Вітаємо, {player.Name}! Ви - {player.Race} {player.Class}, який щойно прибув до легендарної Нескінченної Таверни. Тепле сяйво ліхтарів освітлює дерев'яні столи, де пригодники з далеких земель діляться розповідями про славу. Гаррік, таверняр, знавіще кивує вам. Що ви робите?"
                 : $"Welcome, {player.Name}! You are a {player.Race} {player.Class} who has just arrived at the legendary Infinite Tavern. The warm glow of lanterns illuminates wooden tables where adventurers from distant lands share tales of glory. Garrick, the tavern keeper, nods at you knowingly. What do you do?";
+
+            var actions = isUkrainian
+                ? new List<string> { "Підійти до Гарріка", "Оглянути таверну", "Замовити напій" }
+                : new List<string> { "Approach Garrick", "Look around the tavern", "Order a drink" };
+
+            return (narrative, actions);
         }
 
         var systemPrompt = isUkrainian
@@ -166,7 +173,18 @@ public class GameService : IGameService
 
 Пиши від другої особи (ти/твій). Створи атмосферу, настрій, унікальні деталі.
 Дай інтригуючу зачіпку, яка змусить гравця бажати досліджувати.
-Закінчи запитанням або ситуацією, що спонукає гравця до дії."
+
+ТАКОЖ: Надай 3 короткі опції дій (2-8 слів кожна), які гравець може зробити першими.
+
+Поверни відповідь У ФОРМАТІ JSON:
+{
+  ""narrative"": ""Твоя історія тут..."",
+  ""suggested_actions"": [
+    ""Перша опція дії"",
+    ""Друга опція дії"",
+    ""Третя опція дії""
+  ]
+}"
             : @"You are a creative Dungeon Master starting a new fantasy RPG adventure.
 Create a UNIQUE, engaging opening scene (2-3 paragraphs) for a player entering the legendary Infinite Tavern.
 
@@ -180,7 +198,18 @@ IMPORTANT: Invent an ORIGINAL starting scenario (how the player arrived here):
 
 Write in second person (you/your). Create atmosphere, mood, unique details.
 Give an intriguing hook that makes the player want to explore.
-End with a question or situation that prompts the player to take action.";
+
+ALSO: Provide 3 short action options (2-8 words each) that the player could take first.
+
+Return your response IN JSON FORMAT:
+{
+  ""narrative"": ""Your story here..."",
+  ""suggested_actions"": [
+    ""First action option"",
+    ""Second action option"",
+    ""Third action option""
+  ]
+}";
 
         var userPrompt = $@"Character: {player.Name}, a level {player.Level} {player.Race} {player.Class}
 
@@ -194,19 +223,26 @@ Starting equipment:
 {string.Join("\n", player.Inventory.Select(i => $"- {i.Name}"))}
 
 Create an immersive, ORIGINAL opening scene that incorporates the character's race, class, and personality.
-Make it unique and memorable - different from other adventures!";
+Make it unique and memorable - different from other adventures!
+Include 3 contextually relevant action options.";
 
         try
         {
-            var response = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt, useJsonFormat: false);
-            return response.Narrative;
+            var response = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt, useJsonFormat: true);
+            return (response.Narrative, response.SuggestedActions);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to generate opening story, using fallback");
-            return isUkrainian
+            var narrative = isUkrainian
                 ? $"Вітаємо, {player.Name}! Ви - {player.Race} {player.Class}, який щойно прибув до легендарної Нескінченної Таверни. Тепле сяйво ліхтарів освітлює дерев'яні столи, де пригодники з далеких земель діляться розповідями про славу. Гаррік, таверняр, знавіще кивує вам. Що ви робите?"
                 : $"Welcome, {player.Name}! You are a {player.Race} {player.Class} who has just arrived at the legendary Infinite Tavern. The warm glow of lanterns illuminates wooden tables where adventurers from distant lands share tales of glory. Garrick, the tavern keeper, nods at you knowingly. What do you do?";
+
+            var actions = isUkrainian
+                ? new List<string> { "Підійти до Гарріка", "Оглянути таверну", "Замовити напій" }
+                : new List<string> { "Approach Garrick", "Look around the tavern", "Order a drink" };
+
+            return (narrative, actions);
         }
     }
 

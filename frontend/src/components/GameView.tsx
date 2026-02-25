@@ -56,10 +56,21 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
             <TurnHistory history={gameState.turnHistory} isLoading={gameState.isLoading} />
           </div>
 
-          {gameState.suggestedActions.length > 0 && (
-            <div className="suggested-actions">
-              <p className="suggested-actions-label">{t('suggestedActions')}:</p>
-              <div className="suggested-actions-buttons">
+          <form onSubmit={handleSubmit} className="action-form">
+            <div className='action-panel'>
+              <input
+              type="text"
+              value={action}
+              onChange={(e) => setAction(e.target.value)}
+              placeholder={t('whatDoYouDo')}
+              disabled={gameState.isLoading}
+              className="action-input"
+            />
+            <button type="submit" disabled={gameState.isLoading || !action.trim()} className="btn-primary">
+              {gameState.isLoading ? '...' : t('act')}
+            </button>
+            </div>
+                <div className="suggested-actions-buttons">
                 {gameState.suggestedActions.map((suggestedAction, index) => (
                   <button
                     key={index}
@@ -71,21 +82,6 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
                   </button>
                 ))}
               </div>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="action-form">
-            <input
-              type="text"
-              value={action}
-              onChange={(e) => setAction(e.target.value)}
-              placeholder={t('whatDoYouDo')}
-              disabled={gameState.isLoading}
-              className="action-input"
-            />
-            <button type="submit" disabled={gameState.isLoading || !action.trim()} className="btn-primary">
-              {gameState.isLoading ? '...' : t('act')}
-            </button>
           </form>
 
           {gameState.error && <div className="error-message">{gameState.error}</div>}

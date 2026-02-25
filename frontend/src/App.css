@@ -375,11 +375,17 @@ button:disabled {
 /* Action Form */
 .action-form {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   background: var(--bg-dark);
   padding: 20px;
   border-radius: 12px;
   border: 1px solid var(--border-color);
+}
+
+.action-panel {
+  display: flex;
+  gap: 12px;
 }
 
 .action-input {
@@ -397,7 +403,7 @@ button:disabled {
   border-color: var(--primary-color);
 }
 
-.action-form .btn-primary {
+.action-panel .btn-primary {
   width: auto;
   padding: 14px 32px;
 }

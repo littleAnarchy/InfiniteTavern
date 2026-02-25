@@ -38,7 +38,7 @@ function App() {
         ],
         isLoading: false,
         error: null,
-        suggestedActions: [],
+        suggestedActions: response.suggestedActions || [],
       });
     } catch (error) {
       setGameState((prev) => ({

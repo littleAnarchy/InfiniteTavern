@@ -40,6 +40,7 @@ export interface NewGameResponse {
   gameSessionId: string;
   message: string;
   playerStats: PlayerStats;
+  suggestedActions: string[];
 }
 
 export interface TurnResponse {

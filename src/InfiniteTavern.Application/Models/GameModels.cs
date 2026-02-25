@@ -44,6 +44,7 @@ public class NewGameResponse
     public Guid GameSessionId { get; set; }
     public string Message { get; set; } = string.Empty;
     public PlayerStats PlayerStats { get; set; } = new();
+    public List<string> SuggestedActions { get; set; } = new();
 }
 
 public class PlayerStats
