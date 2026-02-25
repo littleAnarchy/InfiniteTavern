@@ -101,7 +101,7 @@ export default function CharacterCreation({
             <option value="Ukrainian">{t('ukrainian')}</option>
             <option value="English">{t('english')}</option>
           </select>
-          <small style={{ display: 'block', marginTop: '4px', opacity: 0.7 }}>
+          <small style={{ display: 'block', marginTop: '2px', opacity: 0.7, fontSize: '0.85rem' }}>
             {t('selectLanguage')}
           </small>
         </div>
