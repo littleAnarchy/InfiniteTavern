@@ -143,88 +143,17 @@ public class GameService : IGameService
 
     private async Task<(string narrative, List<string> suggestedActions)> GenerateOpeningStoryAsync(PlayerCharacter player, string language, bool useDefault)
     {
-        var isUkrainian = language.Equals("Ukrainian", StringComparison.OrdinalIgnoreCase);
-
-        // If using default campaign, return fallback immediately with hardcoded actions
+        // If using default campaign, return fallback immediately
         if (useDefault)
         {
-            var narrative = isUkrainian
-                ? $"Вітаємо, {player.Name}! Ви - {player.Race} {player.Class}, який щойно прибув до легендарної Нескінченної Таверни. Тепле сяйво ліхтарів освітлює дерев'яні столи, де пригодники з далеких земель діляться розповідями про славу. Гаррік, таверняр, знавіще кивує вам. Що ви робите?"
-                : $"Welcome, {player.Name}! You are a {player.Race} {player.Class} who has just arrived at the legendary Infinite Tavern. The warm glow of lanterns illuminates wooden tables where adventurers from distant lands share tales of glory. Garrick, the tavern keeper, nods at you knowingly. What do you do?";
-
-            var actions = isUkrainian
-                ? new List<string> { "Підійти до Гарріка", "Оглянути таверну", "Замовити напій" }
-                : new List<string> { "Approach Garrick", "Look around the tavern", "Order a drink" };
-
+            var narrative = PromptTemplates.GetDefaultOpeningNarrative(player.Name, player.Race, player.Class, language);
+            var actions = PromptTemplates.GetDefaultSuggestedActions(language);
             return (narrative, actions);
         }
 
-        var systemPrompt = isUkrainian
-            ? @"Ти - креативний Майстер Підземель, що розпочинає нову фентезійну RPG пригоду.
-Створи УНІКАЛЬНУ, захоплюючу вступну сцену (2-3 параграфи) для гравця, що входить до легендарної Нескінченної Таверни.
-
-ВАЖЛИВО: Придумай ОРИГІНАЛЬНИЙ початковий сценарій (як гравець опинився тут):
-- Можливо, вони шукали щось конкретне
-- Або тікали від небезпеки/ворогів
-- Або отримали таємничий лист/знак
-- Або випадково знайшли таверну під час подорожі
-- Або почули легенди і прийшли навмисно
-- Можна комбінувати різні мотиви
-
-Пиши від другої особи (ти/твій). Створи атмосферу, настрій, унікальні деталі.
-Дай інтригуючу зачіпку, яка змусить гравця бажати досліджувати.
-
-ТАКОЖ: Надай 3 короткі опції дій (2-8 слів кожна), які гравець може зробити першими.
-
-Поверни відповідь У ФОРМАТІ JSON:
-{
-  ""narrative"": ""Твоя історія тут..."",
-  ""suggested_actions"": [
-    ""Перша опція дії"",
-    ""Друга опція дії"",
-    ""Третя опція дії""
-  ]
-}"
-            : @"You are a creative Dungeon Master starting a new fantasy RPG adventure.
-Create a UNIQUE, engaging opening scene (2-3 paragraphs) for a player entering the legendary Infinite Tavern.
-
-IMPORTANT: Invent an ORIGINAL starting scenario (how the player arrived here):
-- Perhaps they were searching for something specific
-- Or fleeing from danger/enemies
-- Or received a mysterious letter/sign
-- Or stumbled upon the tavern while traveling
-- Or heard legends and came deliberately
-- Feel free to combine different motivations
-
-Write in second person (you/your). Create atmosphere, mood, unique details.
-Give an intriguing hook that makes the player want to explore.
-
-ALSO: Provide 3 short action options (2-8 words each) that the player could take first.
-
-Return your response IN JSON FORMAT:
-{
-  ""narrative"": ""Your story here..."",
-  ""suggested_actions"": [
-    ""First action option"",
-    ""Second action option"",
-    ""Third action option""
-  ]
-}";
-
-        var userPrompt = $@"Character: {player.Name}, a level {player.Level} {player.Race} {player.Class}
-
-Stats:
-- HP: {player.HP}/{player.MaxHP}
-- Strength: {player.Strength}
-- Dexterity: {player.Dexterity}
-- Intelligence: {player.Intelligence}
-
-Starting equipment:
-{string.Join("\n", player.Inventory.Select(i => $"- {i.Name}"))}
-
-Create an immersive, ORIGINAL opening scene that incorporates the character's race, class, and personality.
-Make it unique and memorable - different from other adventures!
-Include 3 contextually relevant action options.";
+        var languageInstruction = PromptTemplates.GetLanguageInstruction(language);
+        var systemPrompt = string.Format(PromptTemplates.OpeningStorySystemPrompt, languageInstruction);
+        var userPrompt = PromptTemplates.BuildOpeningStoryUserPrompt(player);
 
         try
         {
@@ -234,14 +163,8 @@ Include 3 contextually relevant action options.";
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to generate opening story, using fallback");
-            var narrative = isUkrainian
-                ? $"Вітаємо, {player.Name}! Ви - {player.Race} {player.Class}, який щойно прибув до легендарної Нескінченної Таверни. Тепле сяйво ліхтарів освітлює дерев'яні столи, де пригодники з далеких земель діляться розповідями про славу. Гаррік, таверняр, знавіще кивує вам. Що ви робите?"
-                : $"Welcome, {player.Name}! You are a {player.Race} {player.Class} who has just arrived at the legendary Infinite Tavern. The warm glow of lanterns illuminates wooden tables where adventurers from distant lands share tales of glory. Garrick, the tavern keeper, nods at you knowingly. What do you do?";
-
-            var actions = isUkrainian
-                ? new List<string> { "Підійти до Гарріка", "Оглянути таверну", "Замовити напій" }
-                : new List<string> { "Approach Garrick", "Look around the tavern", "Order a drink" };
-
+            var narrative = PromptTemplates.GetDefaultOpeningNarrative(player.Name, player.Race, player.Class, language);
+            var actions = PromptTemplates.GetDefaultSuggestedActions(language);
             return (narrative, actions);
         }
     }
@@ -445,10 +368,10 @@ Include 3 contextually relevant action options.";
             return;
         }
 
+        var languageInstruction = PromptTemplates.GetLanguageInstruction(session.Language);
+        var systemPrompt = string.Format(PromptTemplates.SummarySystemPrompt, languageInstruction);
         var summaryPrompt = "Summarize the following events into a brief paragraph:\n\n" +
             string.Join("\n", recentEvents.Select(e => e.Content));
-
-        var systemPrompt = "You are a helpful assistant. Summarize the events concisely in 2-3 sentences.";
 
         try
         {
