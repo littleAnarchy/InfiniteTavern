@@ -86,4 +86,34 @@ public class GameController : ControllerBase
     {
         return Ok(new { status = "healthy", timestamp = DateTime.UtcNow });
     }
+
+    /// <summary>
+    /// Get token usage statistics for a game session
+    /// </summary>
+    [HttpGet("token-stats/{gameSessionId}")]
+    [ProducesResponseType(typeof(TokenUsageStats), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<TokenUsageStats>> GetTokenStats(Guid gameSessionId)
+    {
+        try
+        {
+            if (gameSessionId == Guid.Empty)
+            {
+                return BadRequest("Invalid game session ID");
+            }
+
+            var stats = await _gameService.GetTokenUsageStatsAsync(gameSessionId);
+            return Ok(stats);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Game session not found");
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting token stats");
+            return StatusCode(500, "An error occurred while getting token statistics");
+        }
+    }
 }

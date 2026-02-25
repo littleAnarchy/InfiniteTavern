@@ -56,6 +56,15 @@ public class ClaudeService : IAIService
 
             var responseText = claudeApiResponse.Content[0].Text;
 
+            // Extract token usage
+            var tokenUsage = new TokenUsage
+            {
+                InputTokens = claudeApiResponse.Usage?.InputTokens ?? 0,
+                OutputTokens = claudeApiResponse.Usage?.OutputTokens ?? 0,
+                TotalTokens = (claudeApiResponse.Usage?.InputTokens ?? 0) + (claudeApiResponse.Usage?.OutputTokens ?? 0),
+                ModelName = claudeApiResponse.Model ?? "claude-3-5-sonnet-20241022"
+            };
+
             // If not using JSON format, return plain text as narrative
             if (!useJsonFormat)
             {
@@ -65,7 +74,8 @@ public class ClaudeService : IAIService
                     Events = new List<GameEvent>(),
                     NewNpcs = new List<NewNpc>(),
                     QuestUpdates = new List<QuestUpdate>(),
-                    SkillChecks = new List<SkillCheck>()
+                    SkillChecks = new List<SkillCheck>(),
+                    Usage = tokenUsage
                 };
             }
 
@@ -77,7 +87,13 @@ public class ClaudeService : IAIService
                 PropertyNameCaseInsensitive = true
             });
 
-            return gameResponse ?? throw new InvalidOperationException("Failed to parse Claude response");
+            if (gameResponse == null)
+            {
+                throw new InvalidOperationException("Failed to parse Claude response");
+            }
+
+            gameResponse.Usage = tokenUsage;
+            return gameResponse;
         }
         catch (JsonException ex)
         {
@@ -122,10 +138,18 @@ public class ClaudeService : IAIService
     private class ClaudeApiResponse
     {
         public List<ContentItem> Content { get; set; } = new();
+        public ClaudeUsage? Usage { get; set; }
+        public string? Model { get; set; }
     }
 
     private class ContentItem
     {
         public string Text { get; set; } = string.Empty;
+    }
+
+    private class ClaudeUsage
+    {
+        public int InputTokens { get; set; }
+        public int OutputTokens { get; set; }
     }
 }

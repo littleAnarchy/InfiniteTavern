@@ -9,6 +9,7 @@ public interface IGameService
 {
     Task<NewGameResponse> CreateNewGameAsync(NewGameRequest request);
     Task<TurnResponse> ProcessTurnAsync(TurnRequest request);
+    Task<TokenUsageStats> GetTokenUsageStatsAsync(Guid gameSessionId);
 }
 
 public class GameService : IGameService
@@ -34,6 +35,23 @@ public class GameService : IGameService
         _diceService = diceService;
         _eventHandler = eventHandler;
         _logger = logger;
+    }
+
+    private void RecordTokenUsage(GameSession session, AIResponse aiResponse, string callType)
+    {
+        if (aiResponse.Usage != null)
+        {
+            session.TokenUsageHistory.Add(new TokenUsageEntry
+            {
+                Timestamp = DateTime.UtcNow,
+                TurnNumber = session.TurnNumber,
+                CallType = callType,
+                InputTokens = aiResponse.Usage.InputTokens,
+                OutputTokens = aiResponse.Usage.OutputTokens,
+                TotalTokens = aiResponse.Usage.TotalTokens,
+                ModelName = aiResponse.Usage.ModelName
+            });
+        }
     }
 
     public async Task<NewGameResponse> CreateNewGameAsync(NewGameRequest request)
@@ -73,7 +91,7 @@ public class GameService : IGameService
         };
 
         // Generate opening story with AI
-        var (openingStory, suggestedActions) = await GenerateOpeningStoryAsync(playerCharacter, request.Language, request.UseDefaultCampaign);
+        var (openingStory, suggestedActions, openingResponse) = await GenerateOpeningStoryAsync(playerCharacter, request.Language, request.UseDefaultCampaign);
 
         var tavernKeeper = new Npc
         {
@@ -105,6 +123,12 @@ public class GameService : IGameService
             MemoryEntries = new List<MemoryEntry> { initialMemory },
             Quests = new List<Quest>()
         };
+
+        // Record token usage if AI was used
+        if (openingResponse != null)
+        {
+            RecordTokenUsage(gameSession, openingResponse, "OpeningStory");
+        }
 
         await _repository.CreateAsync(gameSession);
 
@@ -141,14 +165,14 @@ public class GameService : IGameService
         };
     }
 
-    private async Task<(string narrative, List<string> suggestedActions)> GenerateOpeningStoryAsync(PlayerCharacter player, string language, bool useDefault)
+    private async Task<(string narrative, List<string> suggestedActions, AIResponse? response)> GenerateOpeningStoryAsync(PlayerCharacter player, string language, bool useDefault)
     {
         // If using default campaign, return fallback immediately
         if (useDefault)
         {
             var narrative = PromptTemplates.GetDefaultOpeningNarrative(player.Name, player.Race, player.Class, language);
             var actions = PromptTemplates.GetDefaultSuggestedActions(language);
-            return (narrative, actions);
+            return (narrative, actions, null);
         }
 
         var languageInstruction = PromptTemplates.GetLanguageInstruction(language);
@@ -158,14 +182,14 @@ public class GameService : IGameService
         try
         {
             var response = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt, useJsonFormat: true);
-            return (response.Narrative, response.SuggestedActions);
+            return (response.Narrative, response.SuggestedActions, response);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to generate opening story, using fallback");
             var narrative = PromptTemplates.GetDefaultOpeningNarrative(player.Name, player.Race, player.Class, language);
             var actions = PromptTemplates.GetDefaultSuggestedActions(language);
-            return (narrative, actions);
+            return (narrative, actions, null);
         }
     }
 
@@ -224,6 +248,10 @@ public class GameService : IGameService
 
         // Call AI Service
         var aiResponse = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt);
+
+        // Record token usage
+        var callType = session.IsInCombat ? "Combat" : "Turn";
+        RecordTokenUsage(session, aiResponse, callType);
 
         // Apply events
         var appliedEvents = new List<string>();
@@ -472,6 +500,10 @@ public class GameService : IGameService
         try
         {
             var response = await _aiService.GenerateResponseAsync(systemPrompt, userPrompt, useJsonFormat: true);
+            
+            // Record token usage
+            RecordTokenUsage(session, response, "SkillCheck");
+            
             return (response.Narrative, response.Events);
         }
         catch (Exception ex)
@@ -506,6 +538,9 @@ public class GameService : IGameService
         {
             var aiResponse = await _aiService.GenerateResponseAsync(systemPrompt, summaryPrompt);
 
+            // Record token usage
+            RecordTokenUsage(session, aiResponse, "Summary");
+
             var summary = new MemoryEntry
             {
                 Content = aiResponse.Narrative,
@@ -523,5 +558,64 @@ public class GameService : IGameService
         {
             _logger.LogError(ex, "Failed to generate summary for session {SessionId}", session.Id);
         }
+    }
+
+    public async Task<TokenUsageStats> GetTokenUsageStatsAsync(Guid gameSessionId)
+    {
+        var session = await _repository.GetByIdAsync(gameSessionId);
+        
+        if (session == null)
+        {
+            throw new InvalidOperationException($"Game session {gameSessionId} not found");
+        }
+
+        var tokenHistory = session.TokenUsageHistory;
+
+        // Calculate totals
+        var totalTokens = tokenHistory.Sum(t => t.TotalTokens);
+        var totalInputTokens = tokenHistory.Sum(t => t.InputTokens);
+        var totalOutputTokens = tokenHistory.Sum(t => t.OutputTokens);
+
+        // Group by call type
+        var byType = tokenHistory
+            .GroupBy(t => t.CallType)
+            .Select(g => new TokenUsageByType
+            {
+                CallType = g.Key,
+                Count = g.Count(),
+                TotalTokens = g.Sum(t => t.TotalTokens),
+                InputTokens = g.Sum(t => t.InputTokens),
+                OutputTokens = g.Sum(t => t.OutputTokens)
+            })
+            .ToList();
+
+        // Group by turn
+        var byTurn = tokenHistory
+            .GroupBy(t => t.TurnNumber)
+            .Select(g => new TokenUsageByTurn
+            {
+                TurnNumber = g.Key,
+                TotalTokens = g.Sum(t => t.TotalTokens),
+                InputTokens = g.Sum(t => t.InputTokens),
+                OutputTokens = g.Sum(t => t.OutputTokens),
+                CallTypes = g.Select(t => t.CallType).ToList()
+            })
+            .OrderBy(t => t.TurnNumber)
+            .ToList();
+
+        // Estimate cost (rough calculation, assumes GPT-4o-mini pricing)
+        // Input: $0.15 / 1M tokens, Output: $0.60 / 1M tokens
+        var estimatedCost = (totalInputTokens * 0.15m + totalOutputTokens * 0.60m) / 1_000_000m;
+
+        return new TokenUsageStats
+        {
+            GameSessionId = gameSessionId,
+            TotalTokens = totalTokens,
+            TotalInputTokens = totalInputTokens,
+            TotalOutputTokens = totalOutputTokens,
+            ByType = byType,
+            ByTurn = byTurn,
+            EstimatedCost = estimatedCost
+        };
     }
 }

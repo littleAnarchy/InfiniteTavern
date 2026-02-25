@@ -27,6 +27,9 @@ public class AIResponse
     
     [JsonPropertyName("enemies")]
     public List<EnemyResponse> Enemies { get; set; } = new();
+    
+    // Token usage info (not from AI response, populated by service)
+    public TokenUsage? Usage { get; set; }
 }
 
 public class GameEvent
@@ -99,4 +102,12 @@ public class EnemyResponse
     
     [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;
+}
+
+public class TokenUsage
+{
+    public int InputTokens { get; set; }
+    public int OutputTokens { get; set; }
+    public int TotalTokens { get; set; }
+    public string ModelName { get; set; } = string.Empty;
 }

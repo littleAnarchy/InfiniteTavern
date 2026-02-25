@@ -1,9 +1,11 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using InfiniteTavern.Application.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using ThirdParty.Json.LitJson;
 
 namespace InfiniteTavern.Application.Services;
 
@@ -79,6 +81,15 @@ public class OpenAIService : IAIService
 
             var responseText = openAiResponse.Choices[0].Message.Content;
 
+            // Extract token usage
+            var tokenUsage = new TokenUsage
+            {
+                InputTokens = openAiResponse.Usage?.PromptTokens ?? 0,
+                OutputTokens = openAiResponse.Usage?.CompletionTokens ?? 0,
+                TotalTokens = openAiResponse.Usage?.TotalTokens ?? 0,
+                ModelName = openAiResponse.Model ?? "gpt-4o-mini"
+            };
+
             // If not using JSON format, return plain text as narrative
             if (!useJsonFormat)
             {
@@ -88,7 +99,8 @@ public class OpenAIService : IAIService
                     Events = new List<GameEvent>(),
                     NewNpcs = new List<NewNpc>(),
                     QuestUpdates = new List<QuestUpdate>(),
-                    SkillChecks = new List<SkillCheck>()
+                    SkillChecks = new List<SkillCheck>(),
+                    Usage = tokenUsage
                 };
             }
 
@@ -100,9 +112,15 @@ public class OpenAIService : IAIService
                 PropertyNameCaseInsensitive = true
             });
 
-            return gameResponse ?? throw new InvalidOperationException("Failed to parse OpenAI response");
+            if (gameResponse == null)
+            {
+                throw new InvalidOperationException("Failed to parse OpenAI response");
+            }
+
+            gameResponse.Usage = tokenUsage;
+            return gameResponse;
         }
-        catch (JsonException ex)
+        catch (System.Text.Json.JsonException ex)
         {
             _logger.LogError(ex, "Failed to parse OpenAI response as JSON");
 
@@ -145,6 +163,8 @@ public class OpenAIService : IAIService
     private class OpenAIApiResponse
     {
         public List<Choice> Choices { get; set; } = new();
+        public UsageInfo? Usage { get; set; }
+        public string? Model { get; set; }
     }
 
     private class Choice
@@ -155,5 +175,15 @@ public class OpenAIService : IAIService
     private class Message
     {
         public string Content { get; set; } = string.Empty;
+    }
+
+    private class UsageInfo
+    {
+        [JsonPropertyName("prompt_tokens")]
+        public int PromptTokens { get; set; }
+        [JsonPropertyName("completion_tokens")]
+        public int CompletionTokens { get; set; }
+        [JsonPropertyName("total_tokens")]
+        public int TotalTokens { get; set; }
     }
 }

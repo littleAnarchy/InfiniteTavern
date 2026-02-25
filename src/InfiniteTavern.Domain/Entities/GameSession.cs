@@ -24,4 +24,5 @@ public class GameSession
     public List<Npc> Npcs { get; set; } = new();
     public List<Quest> Quests { get; set; } = new();
     public List<MemoryEntry> MemoryEntries { get; set; } = new();
+    public List<TokenUsageEntry> TokenUsageHistory { get; set; } = new();
 }

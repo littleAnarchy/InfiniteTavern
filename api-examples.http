@@ -113,3 +113,6 @@ Content-Type: application/json
   "gameSessionId": "{{gameSessionId}}",
   "playerAction": "I attempt to persuade the guard to let me pass, explaining my important quest"
 }
+###
+# Get Token Usage Statistics
+GET {{baseUrl}}/token-stats/{{gameSessionId}}
