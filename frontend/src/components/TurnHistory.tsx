@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { TurnHistoryEntry } from '../types/game';
 import { useTranslation } from 'react-i18next';
 import DiceRoll from './DiceRoll';
@@ -9,6 +10,11 @@ interface TurnHistoryProps {
 
 export default function TurnHistory({ history, isLoading }: TurnHistoryProps) {
   const { t } = useTranslation();
+  const endOfHistoryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    endOfHistoryRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [history, isLoading]);
 
   return (
     <div className="turn-history">
@@ -57,6 +63,8 @@ export default function TurnHistory({ history, isLoading }: TurnHistoryProps) {
           <p>{t('dmThinking')}</p>
         </div>
       )}
+
+      <div ref={endOfHistoryRef} />
     </div>
   );
 }

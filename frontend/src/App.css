@@ -285,6 +285,7 @@ button:disabled {
   background: var(--bg-dark);
   border-radius: 12px;
   padding: 24px;
+  padding-right: 16px;
   overflow-y: auto;
   margin-bottom: 20px;
   border: 1px solid var(--border-color);
@@ -525,39 +526,69 @@ button:disabled {
 
 /* Scrollbar */
 .history-container::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .history-container::-webkit-scrollbar-track {
-  background: var(--bg-darker);
-  border-radius: 4px;
+  background: transparent;
+  margin: 12px 0;
 }
 
 .history-container::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: all 0.3s ease;
 }
 
 .history-container::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary-color);
+  background: rgba(139, 92, 246, 0.5);
+  background-clip: padding-box;
+}
+
+.history-container::-webkit-scrollbar-thumb:active {
+  background: rgba(139, 92, 246, 0.6);
+  background-clip: padding-box;
+}
+
+/* Firefox scrollbar */
+.history-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
 }
 
 .character-creation::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .character-creation::-webkit-scrollbar-track {
-  background: var(--bg-darker);
-  border-radius: 4px;
+  background: transparent;
+  margin: 16px 0;
 }
 
 .character-creation::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: all 0.3s ease;
 }
 
 .character-creation::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary-color);
+  background: rgba(139, 92, 246, 0.5);
+  background-clip: padding-box;
+}
+
+.character-creation::-webkit-scrollbar-thumb:active {
+  background: rgba(139, 92, 246, 0.6);
+  background-clip: padding-box;
+}
+
+/* Firefox scrollbar */
+.character-creation {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
 }
 
 /* Campaign Type Radio Buttons */
