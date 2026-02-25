@@ -280,7 +280,7 @@ public class GameService : IGameService
         // Save memory entry
         var memoryEntry = new MemoryEntry
         {
-            Content = $"Turn {session.TurnNumber}: Player action: {request.PlayerAction}. {aiResponse.Narrative.Substring(0, Math.Min(200, aiResponse.Narrative.Length))}",
+            Content = $"Turn {session.TurnNumber}: Player action: {request.PlayerAction}. {aiResponse.Narrative}",
             Type = MemoryType.Event,
             ImportanceScore = 5,
             CreatedAt = DateTime.UtcNow
