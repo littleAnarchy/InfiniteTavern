@@ -33,6 +33,7 @@ export default {
   whatDoYouDo: 'What do you do?',
   act: 'Act',
   level: 'Level',
+  suggestedActions: 'Quick Actions',
   
   // Stats
   hp: 'HP',

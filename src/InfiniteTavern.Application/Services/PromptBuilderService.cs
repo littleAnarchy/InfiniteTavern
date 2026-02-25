@@ -58,6 +58,15 @@ Armor: Leather Armor, Chain Mail, Shield
 Potions: Health Potion, Mana Potion, Antidote
 Miscellaneous: Rope, Torch, Key, Map, Letter
 
+SUGGESTED ACTIONS:
+After each narrative, provide 3 SHORT action options (3-8 words each) that the player could take next.
+These should be:
+- Contextually relevant to the current situation
+- Diverse (combat, social, exploration options when applicable)
+- Specific enough to be actionable
+- Written in first person (""I..."") or imperative form
+Examples: ""Talk to the merchant"", ""Search the room carefully"", ""Attack the goblin"", ""Drink a health potion""
+
 RESPONSE FORMAT (strict JSON):
 {{
   ""narrative"": ""Vivid scene description in second person..."",
@@ -104,6 +113,11 @@ RESPONSE FORMAT (strict JSON):
       ""difficulty"": 12,
       ""purpose"": ""Climb the wall""
     }}
+  ],
+  ""suggested_actions"": [
+    ""Short action option 1 (3-8 words)"",
+    ""Short action option 2 (3-8 words)"",
+    ""Short action option 3 (3-8 words)""
   ]
 }}
 

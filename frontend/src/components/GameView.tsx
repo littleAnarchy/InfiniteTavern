@@ -24,6 +24,12 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
     }
   };
 
+  const handleSuggestedAction = (suggestedAction: string) => {
+    if (!gameState.isLoading) {
+      onSubmitAction(suggestedAction);
+    }
+  };
+
   if (!gameState.playerStats) {
     return null;
   }
@@ -49,6 +55,24 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
           <div className="history-container">
             <TurnHistory history={gameState.turnHistory} isLoading={gameState.isLoading} />
           </div>
+
+          {gameState.suggestedActions.length > 0 && (
+            <div className="suggested-actions">
+              <p className="suggested-actions-label">{t('suggestedActions')}:</p>
+              <div className="suggested-actions-buttons">
+                {gameState.suggestedActions.map((suggestedAction, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSuggestedAction(suggestedAction)}
+                    disabled={gameState.isLoading}
+                    className="btn-suggested"
+                  >
+                    {suggestedAction}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="action-form">
             <input

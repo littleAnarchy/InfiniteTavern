@@ -15,6 +15,7 @@ function App() {
     turnHistory: [],
     isLoading: false,
     error: null,
+    suggestedActions: [],
   });
 
   const handleCreateCharacter = async (request: NewGameRequest) => {
@@ -37,6 +38,7 @@ function App() {
         ],
         isLoading: false,
         error: null,
+        suggestedActions: [],
       });
     } catch (error) {
       setGameState((prev) => ({
@@ -83,6 +85,7 @@ function App() {
           },
         ],
         isLoading: false,
+        suggestedActions: response.suggestedActions || [],
       }));
     } catch (error) {
       setGameState((prev) => ({
@@ -102,6 +105,7 @@ function App() {
         turnHistory: [],
         isLoading: false,
         error: null,
+        suggestedActions: [],
       });
     }
   };

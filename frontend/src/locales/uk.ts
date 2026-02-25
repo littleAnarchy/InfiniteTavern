@@ -33,6 +33,7 @@ export default {
   whatDoYouDo: 'Що ви робите?',
   act: 'Діяти',
   level: 'Рівень',
+  suggestedActions: 'Швидкі дії',
   
   // Stats
   hp: 'ХП',

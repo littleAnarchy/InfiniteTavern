@@ -51,6 +51,7 @@ export interface TurnResponse {
   inventory: Item[];
   gold: number;
   diceRolls: DiceRollResult[];
+  suggestedActions: string[];
 }
 
 export interface DiceRollResult {
@@ -79,4 +80,5 @@ export interface GameState {
   turnHistory: TurnHistoryEntry[];
   isLoading: boolean;
   error: string | null;
+  suggestedActions: string[];
 }

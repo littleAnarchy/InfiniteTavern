@@ -357,7 +357,8 @@ Make it unique and memorable - different from other adventures!";
                 Bonuses = i.Bonuses
             }).ToList(),
             Gold = session.PlayerCharacter.Gold,
-            DiceRolls = diceRolls
+            DiceRolls = diceRolls,
+            SuggestedActions = aiResponse.SuggestedActions
         };
     }
 

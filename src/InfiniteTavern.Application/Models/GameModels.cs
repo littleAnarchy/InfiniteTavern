@@ -16,6 +16,7 @@ public class TurnResponse
     public List<ItemDto> Inventory { get; set; } = new();
     public int Gold { get; set; }
     public List<DiceRollResult> DiceRolls { get; set; } = new();
+    public List<string> SuggestedActions { get; set; } = new();
 }
 
 public class DiceRollResult
