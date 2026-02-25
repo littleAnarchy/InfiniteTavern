@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { GameState, NewGameRequest, TurnRequest } from './types/game';
 import { gameService } from './services/gameService';
-import { useTranslation } from 'react-i18next';
 import CharacterCreation from './components/CharacterCreation';
 import GameView from './components/GameView';
 import './App.css';
 
 function App() {
-  const { t } = useTranslation();
   const [gameState, setGameState] = useState<GameState>({
     sessionId: null,
     playerStats: null,
@@ -106,22 +104,6 @@ function App() {
     }
   };
 
-  const handleNewGame = () => {
-    if (window.confirm(t('confirmNewGame'))) {
-      setGameState({
-        sessionId: null,
-        playerStats: null,
-        currentLocation: 'The Infinite Tavern',
-        turnHistory: [],
-        isLoading: false,
-        error: null,
-        suggestedActions: [],
-        isInCombat: false,
-        enemies: [],
-      });
-    }
-  };
-
   return (
     <div className="app">
       {!gameState.sessionId ? (
@@ -130,11 +112,7 @@ function App() {
           isLoading={gameState.isLoading}
         />
       ) : (
-        <GameView
-          gameState={gameState}
-          onSubmitAction={handleSubmitAction}
-          onNewGame={handleNewGame}
-        />
+        <GameView gameState={gameState} onSubmitAction={handleSubmitAction} />
       )}
     </div>
   );

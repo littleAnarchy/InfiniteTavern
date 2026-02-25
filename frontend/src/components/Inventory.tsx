@@ -31,7 +31,6 @@ export default function Inventory({ inventory, gold }: InventoryProps) {
   return (
     <div className="inventory">
       <div className="inventory-header">
-        <h3>💼 {t('inventory')}</h3>
         <div className="gold-display">
           <span className="gold-icon">💰</span>
           <span className="gold-amount">{gold}</span>

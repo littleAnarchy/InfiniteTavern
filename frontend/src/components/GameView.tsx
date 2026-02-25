@@ -3,17 +3,15 @@ import { GameState } from '../types/game';
 import { useTranslation } from 'react-i18next';
 import PlayerStats from './PlayerStats';
 import TurnHistory from './TurnHistory';
-import LanguageSwitcher from './LanguageSwitcher';
 import Inventory from './Inventory';
 import EnemyList from './EnemyList';
 
 interface GameViewProps {
   gameState: GameState;
   onSubmitAction: (action: string) => void;
-  onNewGame: () => void;
 }
 
-export default function GameView({ gameState, onSubmitAction, onNewGame }: GameViewProps) {
+export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
   const { t } = useTranslation();
   const [action, setAction] = useState('');
   const [leftTab, setLeftTab] = useState<'stats' | 'inventory'>('stats');
@@ -42,40 +40,43 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
     <div className="game-view">
       <div className="game-header">
         <h1>{t('gameTitle')}</h1>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <LanguageSwitcher />
-          <button onClick={onNewGame} className="btn-secondary" disabled={gameState.isLoading}>
-            {t('newGame')}
-          </button>
-        </div>
       </div>
 
       <div className={`game-layout ${gameState.isInCombat ? 'in-combat' : ''}`}>
         <aside className="sidebar">
-          <div className="sidebar-tabs">
-            <button
-              className={`tab-button ${leftTab === 'stats' ? 'active' : ''}`}
-              onClick={() => setLeftTab('stats')}
-            >
-              📊 {t('stats')}
-            </button>
-            <button
-              className={`tab-button ${leftTab === 'inventory' ? 'active' : ''}`}
-              onClick={() => setLeftTab('inventory')}
-            >
-              💼 {t('inventory')}
-            </button>
-          </div>
-          
-          <div className="sidebar-content">
-            {leftTab === 'stats' ? (
-              <PlayerStats stats={gameState.playerStats} currentLocation={gameState.currentLocation} />
-            ) : (
-              <Inventory
-                inventory={gameState.playerStats.inventory}
-                gold={gameState.playerStats.gold}
-              />
-            )}
+          <div className={`sidebar-flip-card ${leftTab === 'inventory' ? 'is-flipped' : ''}`}>
+            <div className="sidebar-flip-inner">
+              <div className="sidebar-face sidebar-face-front">
+                <div className="face-content">
+                  <button
+                    type="button"
+                    className="face-toggle-button"
+                    aria-label={`${t('inventory')}`}
+                    onClick={() => setLeftTab('inventory')}
+                  >
+                    <span className="face-toggle-icon">↻</span>
+                  </button>
+                  <PlayerStats
+                    stats={gameState.playerStats}
+                    currentLocation={gameState.currentLocation}
+                  />
+                </div>
+              </div>
+
+              <div className="sidebar-face sidebar-face-back">
+                <div className="face-content">
+                  <button
+                    type="button"
+                    className="face-toggle-button"
+                    aria-label={`${t('stats')}`}
+                    onClick={() => setLeftTab('stats')}
+                  >
+                    <span className="face-toggle-icon">↺</span>
+                  </button>
+                  <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} />
+                </div>
+              </div>
+            </div>
           </div>
         </aside>
 
