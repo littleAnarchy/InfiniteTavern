@@ -30,11 +30,15 @@ body {
 }
 
 .app {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+}
+
+.app:has(.game-view) {
+  align-items: stretch;
 }
 
 /* Character Creation */
@@ -143,10 +147,9 @@ button:disabled {
 /* Game View */
 .game-view {
   width: 100%;
-  max-width: 1320px;
-  height: 90vh;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .game-header {
@@ -168,32 +171,33 @@ button:disabled {
 
 .game-layout {
   display: grid;
-  grid-template-columns: 280px minmax(0, 700px) 280px;
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 2.5fr) minmax(240px, 1fr);
   gap: 20px;
-  justify-content: center;
-  align-content: start;
   flex: 1;
   min-height: 0;
 }
 
 .game-layout.in-combat {
-  grid-template-columns: 240px minmax(0, 700px) 240px;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 2.5fr) minmax(220px, 1fr);
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
   gap: 0;
+  min-height: 0;
 }
 
 .sidebar-flip-card {
   position: relative;
   perspective: 1400px;
+  flex: 1;
+  min-height: 0;
 }
 
 .sidebar-flip-inner {
   position: relative;
-  min-height: 520px;
+  height: 100%;
   transform-style: preserve-3d;
   transition: transform 0.45s ease;
 }
@@ -208,6 +212,7 @@ button:disabled {
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  height: 100%;
   backface-visibility: hidden;
 }
 
@@ -220,6 +225,9 @@ button:disabled {
 .face-content {
   position: relative;
   min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .face-toggle-button {
@@ -294,9 +302,7 @@ button:disabled {
 }
 
 .sidebar-right {
-  position: sticky;
-  top: 20px;
-  max-height: calc(100vh - 180px);
+  min-height: 0;
   overflow-y: auto;
 }
 
