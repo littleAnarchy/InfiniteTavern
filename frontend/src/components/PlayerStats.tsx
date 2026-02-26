@@ -39,40 +39,16 @@ export default function PlayerStats({ stats, currentLocation }: PlayerStatsProps
         </p>
       </div>
 
-      <div className="hp-bar">
-        <div className="hp-label">
-          <span>{t('hp')}</span>
-          <span>
-            {stats.hp} / {stats.maxHP}
-          </span>
-        </div>
-        <div className="hp-progress">
-          <div
-            className="hp-fill"
-            style={{
-              width: `${hpPercentage}%`,
-              backgroundColor: hpColor,
-            }}
-          />
-        </div>
+      <div className="stat-bar">
+        <div className="stat-bar__fill" style={{ width: `${hpPercentage}%`, backgroundColor: hpColor }} />
+        <span className="stat-bar__label">{t('hp')}</span>
+        <span className="stat-bar__value">{stats.hp} / {stats.maxHP}</span>
       </div>
 
-      <div className="hp-bar">
-        <div className="hp-label">
-          <span>{t('xp')}</span>
-          <span>
-            {stats.experience} / {stats.experienceToNextLevel}
-          </span>
-        </div>
-        <div className="hp-progress">
-          <div
-            className="hp-fill"
-            style={{
-              width: `${xpPercentage}%`,
-              backgroundColor: '#9c27b0',
-            }}
-          />
-        </div>
+      <div className="stat-bar">
+        <div className="stat-bar__fill" style={{ width: `${xpPercentage}%`, backgroundColor: '#9c27b0' }} />
+        <span className="stat-bar__label">{t('xp')}</span>
+        <span className="stat-bar__value">{stats.experience} / {stats.experienceToNextLevel}</span>
       </div>
 
       <div className="stats-grid">

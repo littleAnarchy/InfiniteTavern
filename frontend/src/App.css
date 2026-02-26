@@ -481,6 +481,51 @@ button:disabled {
   border-radius: 10px;
 }
 
+/* ── Inline stat bars (HP / XP) ─────────────────────────── */
+.stat-bar {
+  position: relative;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.stat-bar__fill {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  border-radius: 8px;
+  transition: width 0.5s ease, background-color 0.3s;
+  opacity: 0.85;
+}
+
+.stat-bar__label,
+.stat-bar__value {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 26px;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.stat-bar__label {
+  left: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.stat-bar__value {
+  right: 10px;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
