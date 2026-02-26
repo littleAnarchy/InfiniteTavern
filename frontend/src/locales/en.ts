@@ -80,4 +80,9 @@ export default {
 
   // Combat
   enemies: 'Enemies',
+
+  // Game Over
+  gameOver: 'Game Over',
+  gameOverMessage: 'Your hero has fallen in battle. The adventure ends here...',
+  startNewGame: 'New Game',
 };

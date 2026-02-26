@@ -208,6 +208,11 @@ public class GameService : IGameService
             throw new InvalidOperationException($"Player character not found for session {request.GameSessionId}");
         }
 
+        if (session.IsGameOver)
+        {
+            throw new InvalidOperationException("Game is over. Please start a new game.");
+        }
+
         // Get nearby NPCs
         var nearbyNpcs = session.Npcs
             .Where(n => n.CurrentLocation == session.CurrentLocation && n.IsAlive)
@@ -356,6 +361,13 @@ public class GameService : IGameService
             }
         }
 
+        // Check if player died from AI events or skill checks
+        if (session.PlayerCharacter.HP == 0)
+        {
+            session.IsGameOver = true;
+            session.IsInCombat = false;
+        }
+
         // Handle enemy counterattacks in combat
         if (session.IsInCombat && session.PlayerCharacter.HP > 0)
         {
@@ -376,6 +388,7 @@ public class GameService : IGameService
                 // Check if player died
                 if (session.PlayerCharacter.HP == 0)
                 {
+                    session.IsGameOver = true;
                     session.IsInCombat = false;
                     break;
                 }
@@ -434,6 +447,7 @@ public class GameService : IGameService
             DiceRolls = diceRolls,
             SuggestedActions = aiResponse.SuggestedActions,
             IsInCombat = session.IsInCombat,
+            IsGameOver = session.IsGameOver,
             Enemies = session.Enemies.Select(e => new EnemyDto
             {
                 Name = e.Name,

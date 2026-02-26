@@ -18,6 +18,7 @@ public class TurnResponse
     public List<DiceRollResult> DiceRolls { get; set; } = new();
     public List<string> SuggestedActions { get; set; } = new();
     public bool IsInCombat { get; set; }
+    public bool IsGameOver { get; set; }
     public List<EnemyDto> Enemies { get; set; } = new();
 }
 

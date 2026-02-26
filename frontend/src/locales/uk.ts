@@ -80,4 +80,9 @@ export default {
 
   // Combat
   enemies: 'Вороги',
+
+  // Game Over
+  gameOver: 'Кінець гри',
+  gameOverMessage: 'Ваш герой впав у бою. Пригода закінчується тут...',
+  startNewGame: 'Нова гра',
 };

@@ -17,6 +17,7 @@ public class GameSession
 
     // Combat state
     public bool IsInCombat { get; set; } = false;
+    public bool IsGameOver { get; set; } = false;
     public List<Enemy> Enemies { get; set; } = new();
 
     // Embedded documents (not separate collections!)

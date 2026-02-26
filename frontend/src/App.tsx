@@ -15,6 +15,7 @@ function App() {
     error: null,
     suggestedActions: [],
     isInCombat: false,
+    isGameOver: false,
     enemies: [],
   });
 
@@ -40,6 +41,7 @@ function App() {
         error: null,
         suggestedActions: response.suggestedActions || [],
         isInCombat: false,
+        isGameOver: false,
         enemies: [],
       });
     } catch (error) {
@@ -93,6 +95,7 @@ function App() {
         isLoading: false,
         suggestedActions: response.suggestedActions || [],
         isInCombat: response.isInCombat,
+        isGameOver: response.isGameOver,
         enemies: response.enemies,
       }));
     } catch (error) {
@@ -104,6 +107,21 @@ function App() {
     }
   };
 
+  const handleNewGame = () => {
+    setGameState({
+      sessionId: null,
+      playerStats: null,
+      currentLocation: 'The Infinite Tavern',
+      turnHistory: [],
+      isLoading: false,
+      error: null,
+      suggestedActions: [],
+      isInCombat: false,
+      isGameOver: false,
+      enemies: [],
+    });
+  };
+
   return (
     <div className="app">
       {!gameState.sessionId ? (
@@ -112,7 +130,7 @@ function App() {
           isLoading={gameState.isLoading}
         />
       ) : (
-        <GameView gameState={gameState} onSubmitAction={handleSubmitAction} />
+        <GameView gameState={gameState} onSubmitAction={handleSubmitAction} onNewGame={handleNewGame} />
       )}
     </div>
   );

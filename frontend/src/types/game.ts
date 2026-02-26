@@ -62,6 +62,7 @@ export interface TurnResponse {
   diceRolls: DiceRollResult[];
   suggestedActions: string[];
   isInCombat: boolean;
+  isGameOver: boolean;
   enemies: Enemy[];
 }
 
@@ -93,5 +94,6 @@ export interface GameState {
   error: string | null;
   suggestedActions: string[];
   isInCombat: boolean;
+  isGameOver: boolean;
   enemies: Enemy[];
 }

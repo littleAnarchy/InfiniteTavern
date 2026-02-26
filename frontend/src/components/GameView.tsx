@@ -9,9 +9,10 @@ import EnemyList from './EnemyList';
 interface GameViewProps {
   gameState: GameState;
   onSubmitAction: (action: string) => void;
+  onNewGame: () => void;
 }
 
-export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
+export default function GameView({ gameState, onSubmitAction, onNewGame }: GameViewProps) {
   const { t } = useTranslation();
   const [action, setAction] = useState('');
   const [leftTab, setLeftTab] = useState<'stats' | 'inventory'>('stats');
@@ -26,14 +27,14 @@ export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (action.trim() && !gameState.isLoading) {
+    if (action.trim() && !gameState.isLoading && !gameState.isGameOver) {
       onSubmitAction(action);
       setAction('');
     }
   };
 
   const handleSuggestedAction = (suggestedAction: string) => {
-    if (!gameState.isLoading) {
+    if (!gameState.isLoading && !gameState.isGameOver) {
       onSubmitAction(suggestedAction);
     }
   };
@@ -105,12 +106,12 @@ export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
                 value={action}
                 onChange={(e) => setAction(e.target.value)}
                 placeholder={t('whatDoYouDo')}
-                disabled={gameState.isLoading}
+                disabled={gameState.isLoading || gameState.isGameOver}
                 className="action-input"
               />
               <button
                 type="submit"
-                disabled={gameState.isLoading || !action.trim()}
+                disabled={gameState.isLoading || gameState.isGameOver || !action.trim()}
                 className="btn-primary"
               >
                 {gameState.isLoading ? '...' : t('act')}
@@ -121,7 +122,7 @@ export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
                 <button
                   key={index}
                   onClick={() => handleSuggestedAction(suggestedAction)}
-                  disabled={gameState.isLoading}
+                  disabled={gameState.isLoading || gameState.isGameOver}
                   className="btn-suggested"
                 >
                   {suggestedAction}
@@ -131,6 +132,19 @@ export default function GameView({ gameState, onSubmitAction }: GameViewProps) {
           </form>
 
           {gameState.error && <div className="error-message">{gameState.error}</div>}
+
+          {gameState.isGameOver && (
+            <div className="game-over-overlay">
+              <div className="game-over-content">
+                <div className="game-over-icon">&#9760;</div>
+                <h2 className="game-over-title">{t('gameOver')}</h2>
+                <p className="game-over-message">{t('gameOverMessage')}</p>
+                <button className="btn-primary game-over-button" onClick={onNewGame}>
+                  {t('startNewGame')}
+                </button>
+              </div>
+            </div>
+          )}
         </main>
 
         <aside className="sidebar sidebar-right">
