@@ -188,7 +188,7 @@ EVENT TYPES FOR COMBAT:
 - ""damage"": target can be ""player"" or enemy name (e.g., ""Goblin 1"")
 - ""heal"": player uses potion or ability
 - ""flee_attempt"": player tries to escape (requires Dexterity check)
-- ""xp_gained"": award XP when ALL enemies in the encounter are defeated (amount based on enemy difficulty, typically 20-100 XP per enemy)
+- ""xp_gained"": MANDATORY — you MUST include this event in the SAME response where the last enemy dies (amount based on enemy difficulty, 20-100 XP per enemy; for a goblin: 25-40 XP)
 
 COMBAT FLOW:
 1. Player declares action (attack enemy, use item, flee, etc.)
@@ -201,6 +201,7 @@ COMBAT FLOW:
 
 IMPORTANT:
 - Each conscious enemy attacks every turn (unless player action prevents it)
+- DEAD enemies CANNOT deal damage — if an enemy's HP reaches 0 in this turn, it does NOT counterattack
 - Describe combat vividly but keep it brief (3-5 sentences)
 - ENEMY DAMAGE TIERS (per attack, per turn):
   • Weak enemies (goblin, rat, small creature): 1-2 HP
@@ -232,6 +233,12 @@ RESPONSE FORMAT (strict JSON):
       ""amount"": 2,
       ""reason"": ""Goblin 2 counterattack"",
       ""attacker"": ""Goblin 2""
+    }},
+    {{
+      ""type"": ""xp_gained"",
+      ""target"": ""player"",
+      ""amount"": 30,
+      ""reason"": ""Defeated Goblin 1 and Goblin 2""
     }}
   ],
   ""enemies"": [

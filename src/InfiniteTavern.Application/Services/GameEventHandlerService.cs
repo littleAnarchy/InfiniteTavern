@@ -48,8 +48,16 @@ public class GameEventHandlerService : IGameEventHandlerService
     {
         if (gameEvent.Target.Equals("player", StringComparison.OrdinalIgnoreCase) && session.PlayerCharacter != null)
         {
+            // --- Guard: dead enemies cannot deal damage ---
+            if (!string.IsNullOrEmpty(gameEvent.Attacker))
+            {
+                var namedAttacker = session.Enemies.FirstOrDefault(e =>
+                    e.Name.Equals(gameEvent.Attacker, StringComparison.OrdinalIgnoreCase));
+                if (namedAttacker != null && !namedAttacker.IsAlive)
+                    yield break; // attacker is already dead, discard this event
+            }
+
             // --- Dodge / block check ---
-            // Find the attacking enemy: prefer explicit Attacker field, then match by name in Reason
             var attacker = (!string.IsNullOrEmpty(gameEvent.Attacker)
                 ? session.Enemies.FirstOrDefault(e => e.IsAlive &&
                     e.Name.Equals(gameEvent.Attacker, StringComparison.OrdinalIgnoreCase))
@@ -103,6 +111,39 @@ public class GameEventHandlerService : IGameEventHandlerService
                     {
                         session.IsInCombat = false;
                         yield return "Victory! All enemies defeated!";
+
+                        // Auto-award XP — do not rely on AI sending xp_gained
+                        if (session.PlayerCharacter != null)
+                        {
+                            var xpReward = session.Enemies.Sum(e => 10 + e.Attack * 5 + (e.MaxHP / 3));
+                            xpReward = Math.Max(xpReward, 20); // minimum 20 XP
+                            session.PlayerCharacter.Experience += xpReward;
+                            session.CombatXpAwarded = true;
+                            yield return $"Gained {xpReward} XP for defeating all enemies!";
+
+                            // Level-up check
+                            while (session.PlayerCharacter.Experience >= PlayerCharacter.XpToNextLevel(session.PlayerCharacter.Level))
+                            {
+                                session.PlayerCharacter.Experience -= PlayerCharacter.XpToNextLevel(session.PlayerCharacter.Level);
+                                session.PlayerCharacter.Level++;
+                                var hpGain = session.PlayerCharacter.Class switch
+                                {
+                                    "Warrior" => 6, "Cleric" => 5, "Ranger" => 5, "Rogue" => 4, "Wizard" => 3, _ => 4
+                                };
+                                session.PlayerCharacter.MaxHP += hpGain;
+                                session.PlayerCharacter.HP = Math.Min(session.PlayerCharacter.HP + hpGain, session.PlayerCharacter.MaxHP);
+                                switch (session.PlayerCharacter.Class)
+                                {
+                                    case "Warrior": session.PlayerCharacter.Strength++;     break;
+                                    case "Wizard":  session.PlayerCharacter.Intelligence++; break;
+                                    case "Rogue":   session.PlayerCharacter.Dexterity++;    break;
+                                    case "Cleric":  session.PlayerCharacter.Wisdom++;       break;
+                                    case "Ranger":  session.PlayerCharacter.Dexterity++;    break;
+                                    default:        session.PlayerCharacter.Constitution++; break;
+                                }
+                                yield return $"LEVEL UP! You are now level {session.PlayerCharacter.Level}! MaxHP +{hpGain}, primary stat +1.";
+                            }
+                        }
                     }
                 }
             }
@@ -198,6 +239,13 @@ public class GameEventHandlerService : IGameEventHandlerService
     {
         var player = session.PlayerCharacter;
         if (player == null || gameEvent.Amount <= 0) yield break;
+
+        // Skip if combat XP was already auto-awarded this turn to avoid duplication
+        if (session.CombatXpAwarded)
+        {
+            session.CombatXpAwarded = false; // reset for next combat
+            yield break;
+        }
 
         player.Experience += gameEvent.Amount;
         yield return $"Gained {gameEvent.Amount} XP: {gameEvent.Reason}";

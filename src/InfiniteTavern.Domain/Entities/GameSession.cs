@@ -37,6 +37,11 @@ public class GameSession
     public bool IsGameOver { get; set; } = false;
     public List<Enemy> Enemies { get; set; } = new();
 
+    // Transient flag (not persisted) — set when backend auto-awards combat XP
+    // so that a duplicate xp_gained event from the AI can be suppressed
+    [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+    public bool CombatXpAwarded { get; set; } = false;
+
     // Embedded documents (not separate collections!)
     public PlayerCharacter? PlayerCharacter { get; set; }
     public List<Npc> Npcs { get; set; } = new();
