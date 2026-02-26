@@ -20,4 +20,15 @@ public class PlayerCharacter
 
     /// <summary>XP required to reach the next level from the current one.</summary>
     public static int XpToNextLevel(int level) => level * 150;
+
+    /// <summary>
+    /// Defense rating used for dodge checks. Computed from Dexterity modifier
+    /// plus any equipped item "Defense" bonuses.
+    /// Formula: d20 + enemy.Attack >= 10 + Defense → hit (miss = dodged)
+    /// </summary>
+    public int Defense =>
+        (Dexterity - 10) / 2 +
+        Inventory
+            .Where(i => i.IsEquipped && i.Bonuses.ContainsKey("Defense"))
+            .Sum(i => i.Bonuses["Defense"]);
 }

@@ -17,8 +17,21 @@ export default function PlayerStats({ stats, currentLocation }: PlayerStatsProps
   const translateRace = (race: string) => t(race.toLowerCase(), race);
   const translateClass = (cls: string) => t(cls.toLowerCase(), cls);
 
+  const defenseLabel = t('defense');
+
   return (
-    <div className="player-stats">
+    <div className="player-stats" style={{ position: 'relative' }}>
+      <div
+        className="defense-badge"
+        title={defenseLabel}
+        aria-label={defenseLabel}
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L4 5v6c0 5.25 3.5 10.15 8 11.35C16.5 21.15 20 16.25 20 11V5l-8-3z"/>
+        </svg>
+        <span className="defense-badge__value">{stats.defense}</span>
+        <span className="defense-badge__tooltip">{defenseLabel}</span>
+      </div>
       <div className="stats-header">
         <h2>{stats.name}</h2>
         <p className="character-info">

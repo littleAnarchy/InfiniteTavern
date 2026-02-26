@@ -87,7 +87,8 @@ RESPONSE FORMAT (strict JSON):
       ""type"": ""damage"",
       ""target"": ""player"",
       ""amount"": 4,
-      ""reason"": ""Goblin attack""
+      ""reason"": ""Goblin attack"",
+      ""attacker"": ""Goblin""
     }},
     {{
       ""type"": ""item_found"",
@@ -141,16 +142,24 @@ RESPONSE FORMAT (strict JSON):
   ""enemies"": [
     {{
       ""name"": ""Enemy Name"",
-      ""hp"": 20,
-      ""maxHP"": 20,
-      ""description"": ""Brief enemy description""
+      ""hp"": 8,
+      ""maxHP"": 8,
+      ""description"": ""Brief enemy description"",
+      ""attack"": 3
     }}
   ]
 }}
 
 IMPORTANT: Use the ""enemies"" array ONLY when starting a combat encounter.
-Include enemy stats (name, hp, maxHP, description).
-Once combat starts, the system will handle it with special combat rules.
+Include enemy stats (name, hp, maxHP, description, attack) using these tiers:
+- Weak enemies (goblin, rat, small creature): 6-10 HP, attack 2-3
+- Normal enemies (orc, bandit, wolf): 12-18 HP, attack 4-6
+- Strong enemies (troll, knight, bear): 20-30 HP, attack 7-9
+- Boss enemies: 40-60 HP, attack 10-12
+When starting combat, the enemy may deal a surprise attack with these limits:
+- Weak enemy first strike: 1-2 HP damage maximum
+- Normal enemy first strike: 2-3 HP damage maximum
+ALWAYS include ""attacker"" field in damage events that target the player, set to exact enemy name.
 
 LOCATION TYPES:
 When location_change is not null, you MUST include ""locationType"" with one of these exact values:
@@ -193,8 +202,19 @@ COMBAT FLOW:
 IMPORTANT:
 - Each conscious enemy attacks every turn (unless player action prevents it)
 - Describe combat vividly but keep it brief (3-5 sentences)
-- Enemy damage should be reasonable (2-6 HP typically)
+- ENEMY DAMAGE TIERS (per attack, per turn):
+  • Weak enemies (goblin, rat, small creature): 1-2 HP
+  • Normal enemies (orc, bandit, wolf): 2-3 HP
+  • Strong enemies (troll, knight, bear): 3-5 HP
+  • Boss enemies (dragon, demon, lich): 5-8 HP
+- ENEMY HP TIERS:
+  • Weak enemies: 6-10 HP, attack 2-3
+  • Normal enemies: 12-18 HP, attack 4-6
+  • Strong enemies: 20-30 HP, attack 7-9
+  • Boss enemies: 40-60 HP, attack 10-12
 - Player can describe creative attacks, but you determine effectiveness
+- NEVER deal more than 4 damage per hit from a single weak/normal enemy
+- ALWAYS set ""attacker"" to the exact enemy name in damage events targeting the player
 
 RESPONSE FORMAT (strict JSON):
 {{
@@ -203,28 +223,31 @@ RESPONSE FORMAT (strict JSON):
     {{
       ""type"": ""damage"",
       ""target"": ""Goblin 1"",
-      ""amount"": 8,
+      ""amount"": 5,
       ""reason"": ""Sword strike""
     }},
     {{
       ""type"": ""damage"",
       ""target"": ""player"",
-      ""amount"": 3,
-      ""reason"": ""Goblin 2 counterattack""
+      ""amount"": 2,
+      ""reason"": ""Goblin 2 counterattack"",
+      ""attacker"": ""Goblin 2""
     }}
   ],
   ""enemies"": [
     {{
       ""name"": ""Goblin 1"",
-      ""hp"": 12,
-      ""maxHP"": 20,
-      ""description"": ""A vicious goblin warrior""
+      ""hp"": 3,
+      ""maxHP"": 8,
+      ""description"": ""A vicious goblin warrior"",
+      ""attack"": 3
     }},
     {{
       ""name"": ""Goblin 2"",
-      ""hp"": 15,
-      ""maxHP"": 20,
-      ""description"": ""An aggressive goblin scout""
+      ""hp"": 8,
+      ""maxHP"": 8,
+      ""description"": ""An aggressive goblin scout"",
+      ""attack"": 3
     }}
   ],
   ""skill_checks"": [],

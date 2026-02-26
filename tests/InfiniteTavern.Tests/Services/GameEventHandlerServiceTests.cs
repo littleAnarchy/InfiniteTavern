@@ -11,11 +11,15 @@ public class GameEventHandlerServiceTests
 {
     private readonly GameEventHandlerService _service;
     private readonly Mock<ILogger<GameEventHandlerService>> _loggerMock;
+    private readonly Mock<IDiceService> _diceServiceMock;
 
     public GameEventHandlerServiceTests()
     {
         _loggerMock = new Mock<ILogger<GameEventHandlerService>>();
-        _service = new GameEventHandlerService(_loggerMock.Object);
+        _diceServiceMock = new Mock<IDiceService>();
+        // Default: always roll 1 (enemy always misses) so existing tests still pass
+        _diceServiceMock.Setup(d => d.Roll(It.IsAny<string>())).Returns(1);
+        _service = new GameEventHandlerService(_loggerMock.Object, _diceServiceMock.Object);
     }
 
     [Fact]

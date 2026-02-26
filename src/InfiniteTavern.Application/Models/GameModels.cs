@@ -70,6 +70,7 @@ public class PlayerStats
     public int Constitution { get; set; }
     public int Wisdom { get; set; }
     public int Charisma { get; set; }
+    public int Defense { get; set; }
     public int Experience { get; set; }
     public int ExperienceToNextLevel { get; set; }
     public List<ItemDto> Inventory { get; set; } = new();
@@ -93,4 +94,5 @@ public class EnemyDto
     public int MaxHP { get; set; }
     public bool IsAlive { get; set; }
     public string Description { get; set; } = string.Empty;
+    public int Attack { get; set; } = 3;
 }

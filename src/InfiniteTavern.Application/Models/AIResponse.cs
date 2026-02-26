@@ -45,6 +45,10 @@ public class GameEvent
     
     [JsonPropertyName("reason")]
     public string Reason { get; set; } = string.Empty;
+
+    /// <summary>Name of the enemy who dealt this damage (used for defense/dodge checks).</summary>
+    [JsonPropertyName("attacker")]
+    public string? Attacker { get; set; }
 }
 
 public class NewNpc
@@ -105,6 +109,10 @@ public class EnemyResponse
     
     [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;
+
+    /// <summary>Attack rating for hit/dodge checks.</summary>
+    [JsonPropertyName("attack")]
+    public int Attack { get; set; } = 3;
 }
 
 public class TokenUsage

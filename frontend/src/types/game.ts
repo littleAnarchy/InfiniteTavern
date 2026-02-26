@@ -28,6 +28,7 @@ export interface Enemy {
   maxHP: number;
   isAlive: boolean;
   description: string;
+  attack: number;
 }
 
 export interface PlayerStats {
@@ -43,6 +44,7 @@ export interface PlayerStats {
   constitution: number;
   wisdom: number;
   charisma: number;
+  defense: number;
   experience: number;
   experienceToNextLevel: number;
   inventory: Item[];

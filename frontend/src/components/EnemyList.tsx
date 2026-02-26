@@ -45,9 +45,16 @@ function EnemyList({ enemies }: EnemyListProps) {
               style={{ width: `${(enemy.hp / enemy.maxHP) * 100}%` }}
             />
           </div>
-          {enemy.description && (
-            <p className="enemy-description">{enemy.description}</p>
-          )}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.25rem' }}>
+            {enemy.description && (
+              <p className="enemy-description" style={{ margin: 0, flex: 1 }}>{enemy.description}</p>
+            )}
+            {enemy.attack > 0 && (
+              <span style={{ fontSize: '0.72rem', color: '#ef9a9a', marginLeft: '0.5rem', whiteSpace: 'nowrap' }}>
+                ⚔️ {t('atk')} {enemy.attack}
+              </span>
+            )}
+          </div>
         </div>
       ))}
     </div>

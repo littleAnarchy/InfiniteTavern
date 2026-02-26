@@ -53,6 +53,10 @@ export default {
   xp: 'XP',
   levelUp: '🎉 Level Up!',
   levelUpMessage: 'You reached level {level}!',
+  defense: 'Defense',
+  def: 'DEF',
+  attack: 'Attack',
+  atk: 'ATK',
 
   // Turn History
   adventureBegins: 'Your adventure begins here...',

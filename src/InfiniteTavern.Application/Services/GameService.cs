@@ -218,6 +218,7 @@ public class GameService : IGameService
                 Constitution = playerCharacter.Constitution,
                 Wisdom = playerCharacter.Wisdom,
                 Charisma = playerCharacter.Charisma,
+                Defense = playerCharacter.Defense,
                 Experience = playerCharacter.Experience,
                 ExperienceToNextLevel = PlayerCharacter.XpToNextLevel(playerCharacter.Level),
                 Inventory = playerCharacter.Inventory.Select(i => new ItemDto
@@ -378,6 +379,8 @@ public class GameService : IGameService
                     existingEnemy.MaxHP = enemyResponse.MaxHP;
                     existingEnemy.Description = enemyResponse.Description;
                     existingEnemy.IsAlive = enemyResponse.HP > 0;
+                    // Preserve attack unless AI explicitly re-specifies it
+                    if (enemyResponse.Attack > 0) existingEnemy.Attack = enemyResponse.Attack;
                 }
                 else
                 {
@@ -388,7 +391,8 @@ public class GameService : IGameService
                         HP = enemyResponse.HP,
                         MaxHP = enemyResponse.MaxHP,
                         Description = enemyResponse.Description,
-                        IsAlive = enemyResponse.HP > 0
+                        IsAlive = enemyResponse.HP > 0,
+                        Attack = enemyResponse.Attack > 0 ? enemyResponse.Attack : 3
                     });
                 }
             }
@@ -441,33 +445,6 @@ public class GameService : IGameService
         {
             session.IsGameOver = true;
             session.IsInCombat = false;
-        }
-
-        // Handle enemy counterattacks in combat
-        if (session.IsInCombat && session.PlayerCharacter.HP > 0)
-        {
-            var aliveEnemies = session.Enemies.Where(e => e.IsAlive).ToList();
-            foreach (var enemy in aliveEnemies)
-            {
-                // Each enemy attacks
-                var damage = _diceService.Roll("1d6") + 2; // Base enemy damage
-                var damageEvent = new GameEvent
-                {
-                    Type = "damage",
-                    Target = "player",
-                    Amount = damage,
-                    Reason = $"{enemy.Name} counterattack"
-                };
-                _eventHandler.ApplyEvent(session, damageEvent, appliedEvents);
-
-                // Check if player died
-                if (session.PlayerCharacter.HP == 0)
-                {
-                    session.IsGameOver = true;
-                    session.IsInCombat = false;
-                    break;
-                }
-            }
         }
 
         // Increment turn number
@@ -534,7 +511,8 @@ public class GameService : IGameService
                 HP = e.HP,
                 MaxHP = e.MaxHP,
                 IsAlive = e.IsAlive,
-                Description = e.Description
+                Description = e.Description,
+                Attack = e.Attack
             }).ToList()
         };
     }

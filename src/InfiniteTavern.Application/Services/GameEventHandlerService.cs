@@ -12,11 +12,13 @@ public interface IGameEventHandlerService
 public class GameEventHandlerService : IGameEventHandlerService
 {
     private readonly ILogger<GameEventHandlerService> _logger;
+    private readonly IDiceService _diceService;
     private readonly Dictionary<string, Func<GameSession, GameEvent, IEnumerable<string>>> _eventHandlers;
 
-    public GameEventHandlerService(ILogger<GameEventHandlerService> logger)
+    public GameEventHandlerService(ILogger<GameEventHandlerService> logger, IDiceService diceService)
     {
         _logger = logger;
+        _diceService = diceService;
         _eventHandlers = new Dictionary<string, Func<GameSession, GameEvent, IEnumerable<string>>>(StringComparer.OrdinalIgnoreCase)
         {
             { "damage", HandleDamage },
@@ -46,6 +48,32 @@ public class GameEventHandlerService : IGameEventHandlerService
     {
         if (gameEvent.Target.Equals("player", StringComparison.OrdinalIgnoreCase) && session.PlayerCharacter != null)
         {
+            // --- Dodge / block check ---
+            // Find the attacking enemy: prefer explicit Attacker field, then match by name in Reason
+            var attacker = (!string.IsNullOrEmpty(gameEvent.Attacker)
+                ? session.Enemies.FirstOrDefault(e => e.IsAlive &&
+                    e.Name.Equals(gameEvent.Attacker, StringComparison.OrdinalIgnoreCase))
+                : null)
+                ?? session.Enemies.FirstOrDefault(e => e.IsAlive &&
+                    !string.IsNullOrEmpty(e.Name) &&
+                    gameEvent.Reason.Contains(e.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (attacker != null)
+            {
+                // D&D-style hit check: d20 + attacker.Attack >= 10 + player.Defense
+                var roll = _diceService.Roll("1d20");
+                var hitThreshold = 10 + session.PlayerCharacter.Defense - attacker.Attack;
+                var hit = roll >= hitThreshold;
+
+                if (!hit)
+                {
+                    var action = roll + attacker.Attack >= 10 + session.PlayerCharacter.Defense - 3
+                        ? "blocked" : "dodged";
+                    yield return $"{session.PlayerCharacter.Name} {action} the attack from {attacker.Name}! (roll {roll}, needed {Math.Max(1, hitThreshold)})";
+                    yield break;
+                }
+            }
+
             session.PlayerCharacter.HP = Math.Max(0, session.PlayerCharacter.HP - gameEvent.Amount);
             yield return $"Player took {gameEvent.Amount} damage: {gameEvent.Reason}";
 
