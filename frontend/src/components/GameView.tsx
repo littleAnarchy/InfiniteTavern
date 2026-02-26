@@ -5,6 +5,7 @@ import PlayerStats from './PlayerStats';
 import TurnHistory from './TurnHistory';
 import Inventory from './Inventory';
 import EnemyList from './EnemyList';
+import LocationParticles from './LocationParticles';
 
 interface GameViewProps {
   gameState: GameState;
@@ -45,6 +46,7 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
 
   return (
     <div className={`game-view location-${gameState.locationType.toLowerCase()}`}>
+      <LocationParticles locationType={gameState.locationType} />
       <div className="game-header">
         <h1>{t('gameTitle')}</h1>
       </div>
