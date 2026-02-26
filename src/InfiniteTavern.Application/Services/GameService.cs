@@ -611,7 +611,7 @@ public class GameService : IGameService
 
         try
         {
-            var aiResponse = await _aiService.GenerateResponseAsync(systemPrompt, summaryPrompt);
+            var aiResponse = await _aiService.GenerateResponseAsync(systemPrompt, summaryPrompt, useJsonFormat: false);
 
             // Record token usage
             RecordTokenUsage(session, aiResponse, "Summary");
