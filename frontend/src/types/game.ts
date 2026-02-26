@@ -49,6 +49,7 @@ export interface NewGameResponse {
   message: string;
   playerStats: PlayerStats;
   suggestedActions: string[];
+  locationType: string;
 }
 
 export interface TurnResponse {
@@ -56,6 +57,7 @@ export interface TurnResponse {
   playerHP: number;
   maxPlayerHP: number;
   currentLocation: string;
+  locationType: string;
   appliedEvents: string[];
   inventory: Item[];
   gold: number;
@@ -89,6 +91,7 @@ export interface GameState {
   sessionId: string | null;
   playerStats: PlayerStats | null;
   currentLocation: string;
+  locationType: string;
   turnHistory: TurnHistoryEntry[];
   isLoading: boolean;
   error: string | null;

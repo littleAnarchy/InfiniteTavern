@@ -12,6 +12,7 @@ public class TurnResponse
     public int PlayerHP { get; set; }
     public int MaxPlayerHP { get; set; }
     public string CurrentLocation { get; set; } = string.Empty;
+    public string LocationType { get; set; } = "Tavern";
     public List<string> AppliedEvents { get; set; } = new();
     public List<ItemDto> Inventory { get; set; } = new();
     public int Gold { get; set; }
@@ -48,6 +49,7 @@ public class NewGameResponse
     public string Message { get; set; } = string.Empty;
     public PlayerStats PlayerStats { get; set; } = new();
     public List<string> SuggestedActions { get; set; } = new();
+    public string LocationType { get; set; } = "Tavern";
 }
 
 public class PlayerStats

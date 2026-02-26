@@ -72,7 +72,10 @@ public class LocationChange
 {
     [JsonPropertyName("newLocation")]
     public string NewLocation { get; set; } = string.Empty;
-    
+
+    [JsonPropertyName("locationType")]
+    public string LocationType { get; set; } = string.Empty;
+
     [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;
 }

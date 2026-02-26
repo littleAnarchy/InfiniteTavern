@@ -10,6 +10,7 @@ function App() {
     sessionId: null,
     playerStats: null,
     currentLocation: 'The Infinite Tavern',
+    locationType: 'Tavern',
     turnHistory: [],
     isLoading: false,
     error: null,
@@ -29,6 +30,7 @@ function App() {
         sessionId: response.gameSessionId,
         playerStats: response.playerStats,
         currentLocation: 'The Infinite Tavern',
+        locationType: response.locationType || 'Tavern',
         turnHistory: [
           {
             playerAction: 'Entered the tavern',
@@ -82,6 +84,7 @@ function App() {
             }
           : null,
         currentLocation: response.currentLocation,
+        locationType: response.locationType || prev.locationType,
         turnHistory: [
           ...prev.turnHistory,
           {
@@ -112,6 +115,7 @@ function App() {
       sessionId: null,
       playerStats: null,
       currentLocation: 'The Infinite Tavern',
+      locationType: 'Tavern',
       turnHistory: [],
       isLoading: false,
       error: null,

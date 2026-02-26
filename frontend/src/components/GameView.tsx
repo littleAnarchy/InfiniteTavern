@@ -44,7 +44,7 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
   }
 
   return (
-    <div className="game-view">
+    <div className={`game-view location-${gameState.locationType.toLowerCase()}`}>
       <div className="game-header">
         <h1>{t('gameTitle')}</h1>
       </div>

@@ -3,6 +3,22 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace InfiniteTavern.Domain.Entities;
 
+public enum LocationType
+{
+    Tavern,
+    Forest,
+    City,
+    Cave,
+    Dungeon,
+    Mountain,
+    Swamp,
+    Desert,
+    Castle,
+    Village,
+    Beach,
+    Ruins
+}
+
 public class GameSession
 {
     [BsonId]
@@ -10,6 +26,7 @@ public class GameSession
     public Guid Id { get; set; }
 
     public string CurrentLocation { get; set; } = "The Infinite Tavern";
+    public LocationType CurrentLocationType { get; set; } = LocationType.Tavern;
     public string WorldTime { get; set; } = "Evening";
     public string Language { get; set; } = "English";
     public int TurnNumber { get; set; }

@@ -106,6 +106,7 @@ RESPONSE FORMAT (strict JSON):
   ],
   ""location_change"": {{
     ""newLocation"": ""New location name"",
+    ""locationType"": ""Forest"",
     ""description"": ""Brief description""
   }} OR null,
   ""skill_checks"": [
@@ -133,6 +134,11 @@ RESPONSE FORMAT (strict JSON):
 IMPORTANT: Use the ""enemies"" array ONLY when starting a combat encounter.
 Include enemy stats (name, hp, maxHP, description).
 Once combat starts, the system will handle it with special combat rules.
+
+LOCATION TYPES:
+When location_change is not null, you MUST include ""locationType"" with one of these exact values:
+Tavern, Forest, City, Cave, Dungeon, Mountain, Swamp, Desert, Castle, Village, Beach, Ruins
+Choose the closest matching type for the new location.
 
 Be creative, engaging, and reactive to player choices.
 Include consequences for player actions.

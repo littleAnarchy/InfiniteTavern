@@ -269,6 +269,10 @@ public class GameService : IGameService
         if (aiResponse.LocationChange != null)
         {
             session.CurrentLocation = aiResponse.LocationChange.NewLocation;
+            if (Enum.TryParse<LocationType>(aiResponse.LocationChange.LocationType, true, out var locType))
+            {
+                session.CurrentLocationType = locType;
+            }
             appliedEvents.Add($"Moved to {aiResponse.LocationChange.NewLocation}");
         }
 
@@ -433,6 +437,7 @@ public class GameService : IGameService
             PlayerHP = session.PlayerCharacter.HP,
             MaxPlayerHP = session.PlayerCharacter.MaxHP,
             CurrentLocation = session.CurrentLocation,
+            LocationType = session.CurrentLocationType.ToString(),
             AppliedEvents = appliedEvents,
             Inventory = session.PlayerCharacter.Inventory.Select(i => new ItemDto
             {

@@ -27,6 +27,7 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.6;
+  transition: background 0.8s ease;
 }
 
 .app {
@@ -150,6 +151,65 @@ button:disabled {
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
+}
+
+.game-view::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  transition: background 0.8s ease;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+/* Location Backgrounds */
+.game-view.location-tavern::before {
+  background: linear-gradient(135deg, #3d2b1f 0%, #1a0f00 100%);
+}
+
+.game-view.location-forest::before {
+  background: linear-gradient(135deg, #1a3d1a 0%, #0a1f0a 100%);
+}
+
+.game-view.location-city::before {
+  background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+}
+
+.game-view.location-cave::before {
+  background: linear-gradient(135deg, #2d2d2d 0%, #0a0a0a 100%);
+}
+
+.game-view.location-dungeon::before {
+  background: linear-gradient(135deg, #2d1b3d 0%, #0f0a14 100%);
+}
+
+.game-view.location-mountain::before {
+  background: linear-gradient(135deg, #3a4a5c 0%, #1c2833 100%);
+}
+
+.game-view.location-swamp::before {
+  background: linear-gradient(135deg, #2d3a1f 0%, #141a0f 100%);
+}
+
+.game-view.location-desert::before {
+  background: linear-gradient(135deg, #5c4a2d 0%, #2d2414 100%);
+}
+
+.game-view.location-castle::before {
+  background: linear-gradient(135deg, #3a3d4a 0%, #1a1c24 100%);
+}
+
+.game-view.location-village::before {
+  background: linear-gradient(135deg, #2d4a2d 0%, #142014 100%);
+}
+
+.game-view.location-beach::before {
+  background: linear-gradient(135deg, #2d4a5c 0%, #1a2d3a 100%);
+}
+
+.game-view.location-ruins::before {
+  background: linear-gradient(135deg, #3d3a2d 0%, #1a1914 100%);
 }
 
 .game-header {
