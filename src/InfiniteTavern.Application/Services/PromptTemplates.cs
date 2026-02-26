@@ -39,7 +39,10 @@ DO NOT predict future actions or suggest skill checks for actions the player has
 When the player's action requires a check (climbing, sneaking, persuading, etc.):
 - Use ""Strength"" for physical prowess (climbing, breaking, lifting)
 - Use ""Dexterity"" for agility (sneaking, dodging, balancing)
+- Use ""Constitution"" for endurance and physical resilience (resisting poison, holding breath)
 - Use ""Intelligence"" for knowledge (solving puzzles, recalling lore, magic)
+- Use ""Wisdom"" for perception, insight, and survival (noticing details, sensing danger, tracking)
+- Use ""Charisma"" for social interactions (persuasion, intimidation, deception)
 Difficulty ranges: Easy (8), Medium (12), Hard (15), Very Hard (18)
 
 CRITICAL: If you request a skill check, DO NOT include events that depend on the check's outcome in your response.
@@ -111,7 +114,7 @@ RESPONSE FORMAT (strict JSON):
   }} OR null,
   ""skill_checks"": [
     {{
-      ""attribute"": ""Strength"" or ""Dexterity"" or ""Intelligence"",
+      ""attribute"": ""Strength"" or ""Dexterity"" or ""Constitution"" or ""Intelligence"" or ""Wisdom"" or ""Charisma"",
       ""difficulty"": 12,
       ""purpose"": ""Climb the wall""
     }}
@@ -345,7 +348,10 @@ Stats:
 - HP: {player.HP}/{player.MaxHP}
 - Strength: {player.Strength}
 - Dexterity: {player.Dexterity}
+- Constitution: {player.Constitution}
 - Intelligence: {player.Intelligence}
+- Wisdom: {player.Wisdom}
+- Charisma: {player.Charisma}
 
 Starting equipment:
 {equipmentList}

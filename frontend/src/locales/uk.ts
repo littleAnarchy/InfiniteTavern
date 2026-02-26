@@ -23,7 +23,7 @@ export default {
   // Classes
   warrior: 'Воїн',
   wizard: 'Чарівник',
-  rogue: 'Плутанина',
+  rogue: 'Злодій',
   cleric: 'Жрець',
   ranger: 'Рейнджер',
 
@@ -38,11 +38,17 @@ export default {
   // Stats
   hp: 'ХП',
   str: 'СИЛ',
-  dex: 'ЛОВ',
+  dex: 'СПР',
+  con: 'ВИТ',
   int: 'ІНТ',
+  wis: 'МУД',
+  cha: 'ХАР',
   strength: 'Сила',
-  dexterity: 'Ловкість',
+  dexterity: 'Спритність',
+  constitution: 'Витривалість',
   intelligence: 'Інтелект',
+  wisdom: 'Мудрість',
+  charisma: 'Харизма',
 
   // Turn History
   adventureBegins: 'Ваша пригода починається тут...',

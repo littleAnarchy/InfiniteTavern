@@ -40,6 +40,9 @@ export interface PlayerStats {
   strength: number;
   dexterity: number;
   intelligence: number;
+  constitution: number;
+  wisdom: number;
+  charisma: number;
   inventory: Item[];
   gold: number;
 }

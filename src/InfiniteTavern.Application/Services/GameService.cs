@@ -54,19 +54,84 @@ public class GameService : IGameService
         }
     }
 
+    private (int str, int dex, int con, int intel, int wis, int cha, int maxHp) RollStatsForClass(string characterClass)
+    {
+        return characterClass switch
+        {
+            "Warrior" => (
+                str:   _diceService.Roll("2d6") + 3,
+                dex:   _diceService.Roll("2d6") + 1,
+                con:   _diceService.Roll("2d6") + 3,
+                intel: _diceService.Roll("2d6"),
+                wis:   _diceService.Roll("2d6") + 1,
+                cha:   _diceService.Roll("2d6"),
+                maxHp: 12
+            ),
+            "Wizard" => (
+                str:   _diceService.Roll("2d6"),
+                dex:   _diceService.Roll("2d6") + 1,
+                con:   _diceService.Roll("2d6"),
+                intel: _diceService.Roll("2d6") + 3,
+                wis:   _diceService.Roll("2d6") + 2,
+                cha:   _diceService.Roll("2d6") + 1,
+                maxHp: 6
+            ),
+            "Rogue" => (
+                str:   _diceService.Roll("2d6") + 1,
+                dex:   _diceService.Roll("2d6") + 3,
+                con:   _diceService.Roll("2d6") + 1,
+                intel: _diceService.Roll("2d6") + 2,
+                wis:   _diceService.Roll("2d6"),
+                cha:   _diceService.Roll("2d6") + 2,
+                maxHp: 8
+            ),
+            "Cleric" => (
+                str:   _diceService.Roll("2d6") + 1,
+                dex:   _diceService.Roll("2d6"),
+                con:   _diceService.Roll("2d6") + 2,
+                intel: _diceService.Roll("2d6") + 1,
+                wis:   _diceService.Roll("2d6") + 3,
+                cha:   _diceService.Roll("2d6") + 2,
+                maxHp: 10
+            ),
+            "Ranger" => (
+                str:   _diceService.Roll("2d6") + 2,
+                dex:   _diceService.Roll("2d6") + 3,
+                con:   _diceService.Roll("2d6") + 2,
+                intel: _diceService.Roll("2d6") + 1,
+                wis:   _diceService.Roll("2d6") + 2,
+                cha:   _diceService.Roll("2d6"),
+                maxHp: 10
+            ),
+            _ => (
+                str:   _diceService.Roll("2d6") + 1,
+                dex:   _diceService.Roll("2d6") + 1,
+                con:   _diceService.Roll("2d6") + 1,
+                intel: _diceService.Roll("2d6") + 1,
+                wis:   _diceService.Roll("2d6") + 1,
+                cha:   _diceService.Roll("2d6") + 1,
+                maxHp: 8
+            ),
+        };
+    }
+
     public async Task<NewGameResponse> CreateNewGameAsync(NewGameRequest request)
     {
+        var (str, dex, con, intel, wis, cha, maxHp) = RollStatsForClass(request.Class);
         var playerCharacter = new PlayerCharacter
         {
             Name = request.CharacterName,
             Race = request.Race,
             Class = request.Class,
             Level = 1,
-            MaxHP = 20,
-            HP = 20,
-            Strength = _diceService.Roll("3d6"),
-            Dexterity = _diceService.Roll("3d6"),
-            Intelligence = _diceService.Roll("3d6"),
+            MaxHP = maxHp,
+            HP = maxHp,
+            Strength = str,
+            Dexterity = dex,
+            Constitution = con,
+            Intelligence = intel,
+            Wisdom = wis,
+            Charisma = cha,
             Gold = 10,
             Inventory = new List<Item>
             {
@@ -150,6 +215,9 @@ public class GameService : IGameService
                 Strength = playerCharacter.Strength,
                 Dexterity = playerCharacter.Dexterity,
                 Intelligence = playerCharacter.Intelligence,
+                Constitution = playerCharacter.Constitution,
+                Wisdom = playerCharacter.Wisdom,
+                Charisma = playerCharacter.Charisma,
                 Inventory = playerCharacter.Inventory.Select(i => new ItemDto
                 {
                     Name = i.Name,
@@ -471,7 +539,10 @@ public class GameService : IGameService
         {
             "strength" => player.Strength,
             "dexterity" => player.Dexterity,
+            "constitution" => player.Constitution,
             "intelligence" => player.Intelligence,
+            "wisdom" => player.Wisdom,
+            "charisma" => player.Charisma,
             _ => 0
         };
 

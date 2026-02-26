@@ -51,8 +51,20 @@ export default function PlayerStats({ stats, currentLocation }: PlayerStatsProps
           <span className="stat-value">{stats.dexterity}</span>
         </div>
         <div className="stat-item">
+          <span className="stat-label">{t('con')}</span>
+          <span className="stat-value">{stats.constitution}</span>
+        </div>
+        <div className="stat-item">
           <span className="stat-label">{t('int')}</span>
           <span className="stat-value">{stats.intelligence}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">{t('wis')}</span>
+          <span className="stat-value">{stats.wisdom}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">{t('cha')}</span>
+          <span className="stat-value">{stats.charisma}</span>
         </div>
       </div>
 

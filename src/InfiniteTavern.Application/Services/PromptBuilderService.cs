@@ -56,7 +56,10 @@ public class PromptBuilderService : IPromptBuilderService
         sb.AppendLine($"HP: {player.HP}/{player.MaxHP}");
         sb.AppendLine($"Strength: {player.Strength}");
         sb.AppendLine($"Dexterity: {player.Dexterity}");
+        sb.AppendLine($"Constitution: {player.Constitution}");
         sb.AppendLine($"Intelligence: {player.Intelligence}");
+        sb.AppendLine($"Wisdom: {player.Wisdom}");
+        sb.AppendLine($"Charisma: {player.Charisma}");
         sb.AppendLine($"Gold: {player.Gold}");
 
         if (player.Inventory.Any())

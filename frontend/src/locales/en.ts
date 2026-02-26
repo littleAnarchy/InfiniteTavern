@@ -39,10 +39,16 @@ export default {
   hp: 'HP',
   str: 'STR',
   dex: 'DEX',
+  con: 'CON',
   int: 'INT',
+  wis: 'WIS',
+  cha: 'CHA',
   strength: 'Strength',
   dexterity: 'Dexterity',
+  constitution: 'Constitution',
   intelligence: 'Intelligence',
+  wisdom: 'Wisdom',
+  charisma: 'Charisma',
 
   // Turn History
   adventureBegins: 'Your adventure begins here...',

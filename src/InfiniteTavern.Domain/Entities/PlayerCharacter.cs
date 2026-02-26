@@ -11,6 +11,9 @@ public class PlayerCharacter
     public int Strength { get; set; }
     public int Dexterity { get; set; }
     public int Intelligence { get; set; }
+    public int Constitution { get; set; }
+    public int Wisdom { get; set; }
+    public int Charisma { get; set; }
     public List<Item> Inventory { get; set; } = new();
     public int Gold { get; set; } = 0;
 }
