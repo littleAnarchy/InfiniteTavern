@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GameState, NewGameRequest, TurnRequest, EquipItemRequest } from './types/game';
 import { gameService } from './services/gameService';
 import CharacterCreation from './components/CharacterCreation';
 import GameView from './components/GameView';
 import './App.css';
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1024);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 function App() {
+  const isMobile = useIsMobile();
   const [gameState, setGameState] = useState<GameState>({
     sessionId: null,
     playerStats: null,
@@ -157,6 +168,26 @@ function App() {
 
   return (
     <div className="app">
+      {isMobile && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'linear-gradient(135deg, #1a0a00 0%, #2d1200 50%, #1a0a00 100%)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: '2rem', textAlign: 'center',
+        }}>
+          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>⚔️</div>
+          <h1 style={{ color: '#d4a853', fontFamily: 'serif', fontSize: '1.6rem', marginBottom: '1rem' }}>
+            Infinite Tavern
+          </h1>
+          <p style={{ color: '#c8a882', fontSize: '1.1rem', lineHeight: 1.6, maxWidth: '320px', marginBottom: '0.75rem' }}>
+            Цей сайт ще не адаптований під мобільні пристрої.
+          </p>
+          <p style={{ color: '#8a6a45', fontSize: '0.95rem', lineHeight: 1.6, maxWidth: '320px' }}>
+            Будь ласка, відкрийте його на комп'ютері для найкращого досвіду.
+          </p>
+          <div style={{ marginTop: '2rem', color: '#5a4030', fontSize: '0.85rem' }}>🖥️ Desktop only</div>
+        </div>
+      )}
       {!gameState.sessionId ? (
         <CharacterCreation
           onCreateCharacter={handleCreateCharacter}
