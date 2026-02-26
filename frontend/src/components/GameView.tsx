@@ -11,9 +11,10 @@ interface GameViewProps {
   gameState: GameState;
   onSubmitAction: (action: string) => void;
   onNewGame: () => void;
+  onEquipItem?: (itemName: string) => void;
 }
 
-export default function GameView({ gameState, onSubmitAction, onNewGame }: GameViewProps) {
+export default function GameView({ gameState, onSubmitAction, onNewGame, onEquipItem }: GameViewProps) {
   const { t } = useTranslation();
   const [action, setAction] = useState('');
   const [leftTab, setLeftTab] = useState<'stats' | 'inventory'>('stats');
@@ -83,7 +84,7 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
                     >
                       <span className="face-toggle-icon">↺</span>
                     </button>
-                    <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} hideTitle />
+                    <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} hideTitle onEquipItem={onEquipItem} />
                   </div>
                 </div>
               </div>
@@ -153,7 +154,7 @@ export default function GameView({ gameState, onSubmitAction, onNewGame }: GameV
           {gameState.isInCombat ? (
             <EnemyList enemies={gameState.enemies} />
           ) : (
-            <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} />
+            <Inventory inventory={gameState.playerStats.inventory} gold={gameState.playerStats.gold} onEquipItem={onEquipItem} />
           )}
         </aside>
       </div>

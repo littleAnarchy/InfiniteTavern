@@ -1,4 +1,4 @@
-import { NewGameRequest, NewGameResponse, TurnRequest, TurnResponse } from '../types/game';
+import { NewGameRequest, NewGameResponse, TurnRequest, TurnResponse, EquipItemRequest, EquipItemResponse } from '../types/game';
 
 // Use environment variable for API URL, fallback to local proxy in development
 const API_BASE_URL = import.meta.env.VITE_API_URL
@@ -37,6 +37,19 @@ export const gameService = {
       throw new Error(`Failed to process turn: ${error}`);
     }
 
+    return response.json();
+  },
+
+  async equipItem(request: EquipItemRequest): Promise<EquipItemResponse> {
+    const response = await fetch(`${API_BASE_URL}/equip`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to equip item: ${error}`);
+    }
     return response.json();
   },
 };

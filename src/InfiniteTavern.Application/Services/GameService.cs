@@ -9,6 +9,7 @@ public interface IGameService
 {
     Task<NewGameResponse> CreateNewGameAsync(NewGameRequest request);
     Task<TurnResponse> ProcessTurnAsync(TurnRequest request);
+    Task<EquipItemResponse> EquipItemAsync(EquipItemRequest request);
     Task<TokenUsageStats> GetTokenUsageStatsAsync(Guid gameSessionId);
 }
 
@@ -212,12 +213,12 @@ public class GameService : IGameService
                 Level = playerCharacter.Level,
                 HP = playerCharacter.HP,
                 MaxHP = playerCharacter.MaxHP,
-                Strength = playerCharacter.Strength,
-                Dexterity = playerCharacter.Dexterity,
-                Intelligence = playerCharacter.Intelligence,
-                Constitution = playerCharacter.Constitution,
-                Wisdom = playerCharacter.Wisdom,
-                Charisma = playerCharacter.Charisma,
+                Strength     = playerCharacter.Strength     + playerCharacter.GetEquippedBonus("Strength"),
+                Dexterity    = playerCharacter.Dexterity    + playerCharacter.GetEquippedBonus("Dexterity"),
+                Intelligence = playerCharacter.Intelligence + playerCharacter.GetEquippedBonus("Intelligence"),
+                Constitution = playerCharacter.Constitution + playerCharacter.GetEquippedBonus("Constitution"),
+                Wisdom       = playerCharacter.Wisdom       + playerCharacter.GetEquippedBonus("Wisdom"),
+                Charisma     = playerCharacter.Charisma     + playerCharacter.GetEquippedBonus("Charisma"),
                 Defense = playerCharacter.Defense,
                 Experience = playerCharacter.Experience,
                 ExperienceToNextLevel = PlayerCharacter.XpToNextLevel(playerCharacter.Level),
@@ -633,6 +634,44 @@ public class GameService : IGameService
         {
             _logger.LogError(ex, "Failed to generate summary for session {SessionId}", session.Id);
         }
+    }
+
+    public async Task<EquipItemResponse> EquipItemAsync(EquipItemRequest request)
+    {
+        var session = await _repository.GetByIdAsync(request.GameSessionId)
+            ?? throw new InvalidOperationException($"Game session {request.GameSessionId} not found");
+
+        var player = session.PlayerCharacter
+            ?? throw new InvalidOperationException("Player character not found");
+
+        var item = player.Inventory.FirstOrDefault(i =>
+            i.Name.Equals(request.ItemName, StringComparison.OrdinalIgnoreCase))
+            ?? throw new InvalidOperationException($"Item '{request.ItemName}' not found in inventory");
+
+        // Toggle equipped state
+        item.IsEquipped = !item.IsEquipped;
+
+        await _repository.UpdateAsync(session);
+
+        return new EquipItemResponse
+        {
+            Strength    = player.Strength    + player.GetEquippedBonus("Strength"),
+            Dexterity   = player.Dexterity   + player.GetEquippedBonus("Dexterity"),
+            Constitution= player.Constitution+ player.GetEquippedBonus("Constitution"),
+            Intelligence= player.Intelligence+ player.GetEquippedBonus("Intelligence"),
+            Wisdom      = player.Wisdom      + player.GetEquippedBonus("Wisdom"),
+            Charisma    = player.Charisma    + player.GetEquippedBonus("Charisma"),
+            Defense     = player.Defense,
+            Inventory = player.Inventory.Select(i => new ItemDto
+            {
+                Name = i.Name,
+                Type = i.Type,
+                Description = i.Description,
+                Quantity = i.Quantity,
+                IsEquipped = i.IsEquipped,
+                Bonuses = i.Bonuses
+            }).ToList()
+        };
     }
 
     public async Task<TokenUsageStats> GetTokenUsageStatsAsync(Guid gameSessionId)

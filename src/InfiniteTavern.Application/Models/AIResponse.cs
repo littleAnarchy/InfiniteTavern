@@ -49,6 +49,14 @@ public class GameEvent
     /// <summary>Name of the enemy who dealt this damage (used for defense/dodge checks).</summary>
     [JsonPropertyName("attacker")]
     public string? Attacker { get; set; }
+
+    /// <summary>Item type for item_found events (Weapon, Armor, Shield, Helmet, Boots, Amulet, Ring, Potion, Scroll, Accessory, Miscellaneous).</summary>
+    [JsonPropertyName("item_type")]
+    public string? ItemType { get; set; }
+
+    /// <summary>Item stat bonuses for item_found events, e.g. {"Defense": 2, "Strength": 1}.</summary>
+    [JsonPropertyName("bonuses")]
+    public Dictionary<string, int>? Bonuses { get; set; }
 }
 
 public class NewNpc

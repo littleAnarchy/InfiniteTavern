@@ -169,6 +169,53 @@
   font-weight: 600;
 }
 
+.item-header-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+.equip-btn {
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: all 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.inventory-item:hover .equip-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.equip-btn:hover {
+  background: rgba(139, 92, 246, 0.35);
+  border-color: rgba(139, 92, 246, 0.7);
+  color: #c4b5fd;
+}
+
+.equip-btn--unequip {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.equip-btn--unequip:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
+}
+
 /* Scrollbar styling */
 .inventory-list::-webkit-scrollbar {
   width: 8px;

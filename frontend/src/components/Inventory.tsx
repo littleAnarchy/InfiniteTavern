@@ -6,27 +6,41 @@ interface InventoryProps {
   inventory: Item[];
   gold: number;
   hideTitle?: boolean;
+  onEquipItem?: (itemName: string) => void;
 }
 
-export default function Inventory({ inventory, gold, hideTitle }: InventoryProps) {
+const EQUIPPABLE_TYPES = new Set(['weapon', 'armor', 'shield', 'helmet', 'boots', 'amulet', 'ring', 'accessory']);
+
+export default function Inventory({ inventory, gold, hideTitle, onEquipItem }: InventoryProps) {
   const { t } = useTranslation();
 
   const getItemIcon = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'weapon':
-        return '⚔️';
-      case 'armor':
-        return '🛡️';
-      case 'potion':
-        return '🧪';
-      default:
-        return '📦';
+      case 'weapon': return '⚔️';
+      case 'armor': return '🛡️';
+      case 'shield': return '🛡️';
+      case 'helmet': return '⛑️';
+      case 'boots': return '👢';
+      case 'amulet': return '📿';
+      case 'ring': return '💍';
+      case 'accessory': return '✨';
+      case 'potion': return '🧪';
+      case 'scroll': return '📜';
+      case 'key': return '🗝️';
+      default: return '📦';
     }
   };
 
-  const getItemTypeTranslation = (type: string) => {
+  const getItemTypeLabel = (type: string): string => {
     const key = `itemType${type.charAt(0).toUpperCase()}${type.slice(1).toLowerCase()}`;
-    return (t as any)[key] || type;
+    const translated = t(key);
+    return translated === key ? type : translated;
+  };
+
+  const getStatLabel = (stat: string): string => {
+    const key = stat.toLowerCase();
+    const translated = t(key);
+    return translated === key ? stat : translated;
   };
 
   return (
@@ -59,15 +73,26 @@ export default function Inventory({ inventory, gold, hideTitle }: InventoryProps
                     {item.name}
                     {item.quantity > 1 && <span className="item-quantity"> x{item.quantity}</span>}
                   </span>
-                  {item.isEquipped && <span className="equipped-badge">{t('equipped')}</span>}
+                  <div className="item-header-badges">
+                    {item.isEquipped && <span className="equipped-badge">{t('equipped')}</span>}
+                    {EQUIPPABLE_TYPES.has(item.type.toLowerCase()) && onEquipItem && (
+                      <button
+                        className={`equip-btn ${item.isEquipped ? 'equip-btn--unequip' : ''}`}
+                        onClick={() => onEquipItem(item.name)}
+                        title={item.isEquipped ? t('unequip') : t('equip')}
+                      >
+                        {item.isEquipped ? t('unequip') : t('equip')}
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="item-type">{getItemTypeTranslation(item.type)}</div>
+                <div className="item-type">{getItemTypeLabel(item.type)}</div>
                 <div className="item-description">{item.description}</div>
                 {Object.keys(item.bonuses).length > 0 && (
                   <div className="item-bonuses">
                     {Object.entries(item.bonuses).map(([stat, value]) => (
                       <span key={stat} className="bonus">
-                        +{value} {stat}
+                        +{value} {getStatLabel(stat)}
                       </span>
                     ))}
                   </div>
@@ -80,3 +105,4 @@ export default function Inventory({ inventory, gold, hideTitle }: InventoryProps
     </div>
   );
 }
+

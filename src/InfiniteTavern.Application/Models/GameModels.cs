@@ -96,3 +96,21 @@ public class EnemyDto
     public string Description { get; set; } = string.Empty;
     public int Attack { get; set; } = 3;
 }
+
+public class EquipItemRequest
+{
+    public Guid GameSessionId { get; set; }
+    public string ItemName { get; set; } = string.Empty;
+}
+
+public class EquipItemResponse
+{
+    public int Strength { get; set; }
+    public int Dexterity { get; set; }
+    public int Constitution { get; set; }
+    public int Intelligence { get; set; }
+    public int Wisdom { get; set; }
+    public int Charisma { get; set; }
+    public int Defense { get; set; }
+    public List<ItemDto> Inventory { get; set; } = new();
+}

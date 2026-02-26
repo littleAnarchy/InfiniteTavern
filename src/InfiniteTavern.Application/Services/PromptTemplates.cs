@@ -64,11 +64,24 @@ Examples:
 In your narrative, describe the attempt WITHOUT revealing the outcome. The backend will roll the dice and return success/failure.
 Write your narrative assuming the check is pending (e.g., ""You begin to examine the chest, searching for clues..."" not ""You successfully open it"").
 
-ITEM EXAMPLES:
-Weapons: Sword, Dagger, Bow, Staff, Axe
-Armor: Leather Armor, Chain Mail, Shield
-Potions: Health Potion, Mana Potion, Antidote
-Miscellaneous: Rope, Torch, Key, Map, Letter
+ITEM TYPES AND NAMING RULES:
+Use these EXACT type values in item_found events. The ""reason"" field MUST be ONLY the item name — never add prefixes like ""Found"", ""Знайдено"", ""Item:"", ""Предмет:"", etc.
+
+- ""Weapon"":  Sword, Dagger, Bow, Staff, Axe — bonuses: {{""Strength"": N}} or {{""Dexterity"": N}} (N=1-3)
+- ""Armor"":   Leather Armor, Chain Mail, Plate Armor — MUST include bonus {{""Defense"": N}} (N=1-5)
+- ""Shield"":  Wooden Shield, Iron Shield — bonus {{""Defense"": N}} (N=1-3)
+- ""Helmet"":  Iron Helmet, Leather Cap — bonus {{""Defense"": N}} (N=1-2)
+- ""Boots"":   Leather Boots, Swift Boots — bonus {{""Dexterity"": N}} (N=1-2)
+- ""Amulet"":  Amulet of Wisdom, Lucky Pendant — bonus: one stat +1 to +3
+- ""Ring"":    Ring of Strength, Silver Ring — bonus: one stat +1 to +2
+- ""Accessory"": Cape, Gloves, Belt — minor bonus
+- ""Potion"":  Health Potion, Mana Potion, Antidote — consumables, no bonuses
+- ""Scroll"":  Scroll of Fireball — single-use magic, no bonuses
+- ""Miscellaneous"": Rope, Torch, Key, Map, Letter — no bonuses
+
+CRITICAL NAMING: item ""reason"" = ONLY the item name.
+  CORRECT: ""reason"": ""Leather Armor""
+  WRONG:   ""reason"": ""Знайдено шкіряну броню""  or  ""reason"": ""Found Leather Armor""
 
 SUGGESTED ACTIONS:
 After each narrative, provide 3 SHORT action options (3-8 words each) that the player could take next.
@@ -94,7 +107,16 @@ RESPONSE FORMAT (strict JSON):
       ""type"": ""item_found"",
       ""target"": ""player"",
       ""amount"": 1,
-      ""reason"": ""Health Potion""
+      ""reason"": ""Health Potion"",
+      ""item_type"": ""Potion""
+    }},
+    {{
+      ""type"": ""item_found"",
+      ""target"": ""player"",
+      ""amount"": 1,
+      ""reason"": ""Leather Armor"",
+      ""item_type"": ""Armor"",
+      ""bonuses"": {{""Defense"": 2}}
     }},
     {{
       ""type"": ""gold_found"",

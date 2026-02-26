@@ -1,4 +1,20 @@
 // API Request Types
+export interface EquipItemRequest {
+  gameSessionId: string;
+  itemName: string;
+}
+
+export interface EquipItemResponse {
+  strength: number;
+  dexterity: number;
+  constitution: number;
+  intelligence: number;
+  wisdom: number;
+  charisma: number;
+  defense: number;
+  inventory: Item[];
+}
+
 export interface NewGameRequest {
   characterName: string;
   race: string;

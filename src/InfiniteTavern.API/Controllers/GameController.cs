@@ -116,4 +116,29 @@ public class GameController : ControllerBase
             return StatusCode(500, "An error occurred while getting token statistics");
         }
     }
+
+    /// <summary>
+    /// Equip or unequip an item in the player's inventory
+    /// </summary>
+    [HttpPost("equip")]
+    [ProducesResponseType(typeof(EquipItemResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<EquipItemResponse>> EquipItem([FromBody] EquipItemRequest request)
+    {
+        try
+        {
+            var response = await _gameService.EquipItemAsync(request);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Equip item failed");
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error equipping item");
+            return StatusCode(500, "An error occurred while equipping the item");
+        }
+    }
 }

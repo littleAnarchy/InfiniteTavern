@@ -21,6 +21,12 @@ public class PlayerCharacter
     /// <summary>XP required to reach the next level from the current one.</summary>
     public static int XpToNextLevel(int level) => level * 150;
 
+    /// <summary>Sum of equipped items' bonuses for a given stat name (case-insensitive).</summary>
+    public int GetEquippedBonus(string stat) =>
+        Inventory
+            .Where(i => i.IsEquipped)
+            .Sum(i => i.Bonuses.TryGetValue(stat, out var v) ? v : 0);
+
     /// <summary>
     /// Defense rating used for dodge checks. Computed from Dexterity modifier
     /// plus any equipped item "Defense" bonuses.

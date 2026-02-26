@@ -172,12 +172,25 @@ public class GameEventHandlerService : IGameEventHandlerService
         }
     }
 
+    /// <summary>Strip AI prefixes like "Found: ", "Знайдено ", "Item: ", etc. from item names.</summary>
+    private static string CleanItemName(string raw)
+    {
+        var cleaned = System.Text.RegularExpressions.Regex.Replace(
+            raw.Trim(),
+            @"^(Found|Знайдено|Item|Предмет|Отримано|Received|Pickup|Picked up)\s*:?\s*",
+            string.Empty,
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase).Trim();
+        return string.IsNullOrWhiteSpace(cleaned) ? raw.Trim() : cleaned;
+    }
+
     private IEnumerable<string> HandleItemFound(GameSession session, GameEvent gameEvent)
     {
         if (session.PlayerCharacter == null) yield break;
 
+        var itemName = CleanItemName(gameEvent.Reason ?? string.Empty);
+
         var existingItem = session.PlayerCharacter.Inventory
-            .FirstOrDefault(i => i.Name.Equals(gameEvent.Reason, StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
 
         if (existingItem != null)
         {
@@ -185,15 +198,17 @@ public class GameEventHandlerService : IGameEventHandlerService
         }
         else
         {
-            session.PlayerCharacter.Inventory.Add(new Item
+            var newItem = new Item
             {
-                Name = gameEvent.Reason,
-                Type = "Miscellaneous",
+                Name = itemName,
+                Type = !string.IsNullOrWhiteSpace(gameEvent.ItemType) ? gameEvent.ItemType : "Miscellaneous",
                 Description = "Found during adventure",
-                Quantity = gameEvent.Amount > 0 ? gameEvent.Amount : 1
-            });
+                Quantity = gameEvent.Amount > 0 ? gameEvent.Amount : 1,
+                Bonuses = gameEvent.Bonuses ?? new Dictionary<string, int>()
+            };
+            session.PlayerCharacter.Inventory.Add(newItem);
         }
-        yield return $"Found: {gameEvent.Reason} x{(gameEvent.Amount > 0 ? gameEvent.Amount : 1)}";
+        yield return $"Found: {itemName} x{(gameEvent.Amount > 0 ? gameEvent.Amount : 1)}";
     }
 
     private IEnumerable<string> HandleItemLost(GameSession session, GameEvent gameEvent)

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GameState, NewGameRequest, TurnRequest } from './types/game';
+import { GameState, NewGameRequest, TurnRequest, EquipItemRequest } from './types/game';
 import { gameService } from './services/gameService';
 import CharacterCreation from './components/CharacterCreation';
 import GameView from './components/GameView';
@@ -129,6 +129,32 @@ function App() {
     });
   };
 
+  const handleEquipItem = async (itemName: string) => {
+    if (!gameState.sessionId) return;
+    const request: EquipItemRequest = { gameSessionId: gameState.sessionId, itemName };
+    try {
+      const response = await gameService.equipItem(request);
+      setGameState((prev) => ({
+        ...prev,
+        playerStats: prev.playerStats
+          ? {
+              ...prev.playerStats,
+              strength: response.strength,
+              dexterity: response.dexterity,
+              constitution: response.constitution,
+              intelligence: response.intelligence,
+              wisdom: response.wisdom,
+              charisma: response.charisma,
+              defense: response.defense,
+              inventory: response.inventory,
+            }
+          : null,
+      }));
+    } catch (error) {
+      console.error('Failed to equip item:', error);
+    }
+  };
+
   return (
     <div className="app">
       {!gameState.sessionId ? (
@@ -137,7 +163,7 @@ function App() {
           isLoading={gameState.isLoading}
         />
       ) : (
-        <GameView gameState={gameState} onSubmitAction={handleSubmitAction} onNewGame={handleNewGame} />
+        <GameView gameState={gameState} onSubmitAction={handleSubmitAction} onNewGame={handleNewGame} onEquipItem={handleEquipItem} />
       )}
     </div>
   );
