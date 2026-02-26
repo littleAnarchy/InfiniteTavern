@@ -24,7 +24,8 @@ public class GameEventHandlerService : IGameEventHandlerService
             { "item_found", HandleItemFound },
             { "item_lost", HandleItemLost },
             { "gold_found", HandleGoldFound },
-            { "gold_spent", HandleGoldSpent }
+            { "gold_spent", HandleGoldSpent },
+            { "xp_gained", HandleXpGained }
         };
     }
 
@@ -162,6 +163,47 @@ public class GameEventHandlerService : IGameEventHandlerService
         {
             session.PlayerCharacter.Gold = Math.Max(0, session.PlayerCharacter.Gold - gameEvent.Amount);
             yield return $"Spent {gameEvent.Amount} gold: {gameEvent.Reason}";
+        }
+    }
+
+    private IEnumerable<string> HandleXpGained(GameSession session, GameEvent gameEvent)
+    {
+        var player = session.PlayerCharacter;
+        if (player == null || gameEvent.Amount <= 0) yield break;
+
+        player.Experience += gameEvent.Amount;
+        yield return $"Gained {gameEvent.Amount} XP: {gameEvent.Reason}";
+
+        // Level-up loop (handles multiple levels at once)
+        while (player.Experience >= PlayerCharacter.XpToNextLevel(player.Level))
+        {
+            player.Experience -= PlayerCharacter.XpToNextLevel(player.Level);
+            player.Level++;
+
+            var hpGain = player.Class switch
+            {
+                "Warrior" => 6,
+                "Cleric"  => 5,
+                "Ranger"  => 5,
+                "Rogue"   => 4,
+                "Wizard"  => 3,
+                _          => 4
+            };
+            player.MaxHP += hpGain;
+            player.HP = Math.Min(player.HP + hpGain, player.MaxHP);
+
+            // Primary stat bonus
+            switch (player.Class)
+            {
+                case "Warrior": player.Strength++;     break;
+                case "Wizard":  player.Intelligence++; break;
+                case "Rogue":   player.Dexterity++;    break;
+                case "Cleric":  player.Wisdom++;       break;
+                case "Ranger":  player.Dexterity++;    break;
+                default:        player.Constitution++; break;
+            }
+
+            yield return $"LEVEL UP! You are now level {player.Level}! MaxHP +{hpGain}, primary stat +1.";
         }
     }
 }

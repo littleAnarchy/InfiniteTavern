@@ -32,7 +32,6 @@ export default {
   newGame: 'Нова гра',
   whatDoYouDo: 'Що ви робите?',
   act: 'Діяти',
-  level: 'Рівень',
   suggestedActions: 'Швидкі дії',
 
   // Stats
@@ -49,6 +48,11 @@ export default {
   intelligence: 'Інтелект',
   wisdom: 'Мудрість',
   charisma: 'Харизма',
+  experience: 'Досвід',
+  xp: 'ДВ',
+  level: 'Рівень',
+  levelUp: '🎉 Підвищення рівня!',
+  levelUpMessage: 'Ви досягли {level} рівня!',
 
   // Turn History
   adventureBegins: 'Ваша пригода починається тут...',

@@ -10,6 +10,9 @@ export default function PlayerStats({ stats, currentLocation }: PlayerStatsProps
   const { t } = useTranslation();
   const hpPercentage = (stats.hp / stats.maxHP) * 100;
   const hpColor = hpPercentage > 50 ? '#4caf50' : hpPercentage > 25 ? '#ff9800' : '#f44336';
+  const xpPercentage = stats.experienceToNextLevel > 0
+    ? Math.min(100, (stats.experience / stats.experienceToNextLevel) * 100)
+    : 0;
 
   const translateRace = (race: string) => t(race.toLowerCase(), race);
   const translateClass = (cls: string) => t(cls.toLowerCase(), cls);
@@ -36,6 +39,24 @@ export default function PlayerStats({ stats, currentLocation }: PlayerStatsProps
             style={{
               width: `${hpPercentage}%`,
               backgroundColor: hpColor,
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="hp-bar">
+        <div className="hp-label">
+          <span>{t('xp')}</span>
+          <span>
+            {stats.experience} / {stats.experienceToNextLevel}
+          </span>
+        </div>
+        <div className="hp-progress">
+          <div
+            className="hp-fill"
+            style={{
+              width: `${xpPercentage}%`,
+              backgroundColor: '#9c27b0',
             }}
           />
         </div>

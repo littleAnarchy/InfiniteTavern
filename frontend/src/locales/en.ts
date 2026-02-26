@@ -49,6 +49,10 @@ export default {
   intelligence: 'Intelligence',
   wisdom: 'Wisdom',
   charisma: 'Charisma',
+  experience: 'Experience',
+  xp: 'XP',
+  levelUp: '🎉 Level Up!',
+  levelUpMessage: 'You reached level {level}!',
 
   // Turn History
   adventureBegins: 'Your adventure begins here...',

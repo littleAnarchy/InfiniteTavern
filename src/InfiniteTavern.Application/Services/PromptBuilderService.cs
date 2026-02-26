@@ -60,6 +60,7 @@ public class PromptBuilderService : IPromptBuilderService
         sb.AppendLine($"Intelligence: {player.Intelligence}");
         sb.AppendLine($"Wisdom: {player.Wisdom}");
         sb.AppendLine($"Charisma: {player.Charisma}");
+        sb.AppendLine($"Experience: {player.Experience}/{PlayerCharacter.XpToNextLevel(player.Level)} (next level)");
         sb.AppendLine($"Gold: {player.Gold}");
 
         if (player.Inventory.Any())

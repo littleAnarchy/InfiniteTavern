@@ -43,6 +43,8 @@ export interface PlayerStats {
   constitution: number;
   wisdom: number;
   charisma: number;
+  experience: number;
+  experienceToNextLevel: number;
   inventory: Item[];
   gold: number;
 }
@@ -59,6 +61,10 @@ export interface TurnResponse {
   narrative: string;
   playerHP: number;
   maxPlayerHP: number;
+  playerLevel: number;
+  playerExperience: number;
+  playerExperienceToNextLevel: number;
+  leveledUp: boolean;
   currentLocation: string;
   locationType: string;
   appliedEvents: string[];

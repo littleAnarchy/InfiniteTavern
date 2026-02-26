@@ -11,6 +11,10 @@ public class TurnResponse
     public string Narrative { get; set; } = string.Empty;
     public int PlayerHP { get; set; }
     public int MaxPlayerHP { get; set; }
+    public int PlayerLevel { get; set; }
+    public int PlayerExperience { get; set; }
+    public int PlayerExperienceToNextLevel { get; set; }
+    public bool LeveledUp { get; set; }
     public string CurrentLocation { get; set; } = string.Empty;
     public string LocationType { get; set; } = "Tavern";
     public List<string> AppliedEvents { get; set; } = new();
@@ -66,6 +70,8 @@ public class PlayerStats
     public int Constitution { get; set; }
     public int Wisdom { get; set; }
     public int Charisma { get; set; }
+    public int Experience { get; set; }
+    public int ExperienceToNextLevel { get; set; }
     public List<ItemDto> Inventory { get; set; } = new();
     public int Gold { get; set; }
 }

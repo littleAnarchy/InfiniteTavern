@@ -79,6 +79,9 @@ function App() {
               ...prev.playerStats,
               hp: response.playerHP,
               maxHP: response.maxPlayerHP,
+              level: response.playerLevel ?? prev.playerStats.level,
+              experience: response.playerExperience ?? prev.playerStats.experience,
+              experienceToNextLevel: response.playerExperienceToNextLevel ?? prev.playerStats.experienceToNextLevel,
               inventory: response.inventory,
               gold: response.gold,
             }

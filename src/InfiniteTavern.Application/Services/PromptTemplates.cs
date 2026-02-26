@@ -43,6 +43,14 @@ When the player's action requires a check (climbing, sneaking, persuading, etc.)
 - Use ""Intelligence"" for knowledge (solving puzzles, recalling lore, magic)
 - Use ""Wisdom"" for perception, insight, and survival (noticing details, sensing danger, tracking)
 - Use ""Charisma"" for social interactions (persuasion, intimidation, deception)
+
+EXPERIENCE (XP):
+Award XP using ""xp_gained"" events whenever the player:
+- Defeats or helps defeat an enemy (10-80 XP based on difficulty)
+- Completes a quest or objective (50-200 XP)
+- Solves a puzzle or overcomes a significant challenge (20-60 XP)
+- Has a meaningful social encounter or discovery (10-30 XP)
+Do NOT award XP for trivial actions like walking around or talking.
 Difficulty ranges: Easy (8), Medium (12), Hard (15), Very Hard (18)
 
 CRITICAL: If you request a skill check, DO NOT include events that depend on the check's outcome in your response.
@@ -92,6 +100,12 @@ RESPONSE FORMAT (strict JSON):
       ""target"": ""player"",
       ""amount"": 15,
       ""reason"": ""Looted from goblin""
+    }},
+    {{
+      ""type"": ""xp_gained"",
+      ""target"": ""player"",
+      ""amount"": 30,
+      ""reason"": ""Defeated goblin""
     }}
   ],
   ""new_npcs"": [
@@ -165,6 +179,7 @@ EVENT TYPES FOR COMBAT:
 - ""damage"": target can be ""player"" or enemy name (e.g., ""Goblin 1"")
 - ""heal"": player uses potion or ability
 - ""flee_attempt"": player tries to escape (requires Dexterity check)
+- ""xp_gained"": award XP when ALL enemies in the encounter are defeated (amount based on enemy difficulty, typically 20-100 XP per enemy)
 
 COMBAT FLOW:
 1. Player declares action (attack enemy, use item, flee, etc.)

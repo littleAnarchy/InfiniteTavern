@@ -218,6 +218,8 @@ public class GameService : IGameService
                 Constitution = playerCharacter.Constitution,
                 Wisdom = playerCharacter.Wisdom,
                 Charisma = playerCharacter.Charisma,
+                Experience = playerCharacter.Experience,
+                ExperienceToNextLevel = PlayerCharacter.XpToNextLevel(playerCharacter.Level),
                 Inventory = playerCharacter.Inventory.Select(i => new ItemDto
                 {
                     Name = i.Name,
@@ -328,6 +330,7 @@ public class GameService : IGameService
 
         // Apply events
         var appliedEvents = new List<string>();
+        var levelBefore = session.PlayerCharacter.Level;
         foreach (var gameEvent in aiResponse.Events)
         {
             _eventHandler.ApplyEvent(session, gameEvent, appliedEvents);
@@ -504,6 +507,10 @@ public class GameService : IGameService
             Narrative = fullNarrative,
             PlayerHP = session.PlayerCharacter.HP,
             MaxPlayerHP = session.PlayerCharacter.MaxHP,
+            PlayerLevel = session.PlayerCharacter.Level,
+            PlayerExperience = session.PlayerCharacter.Experience,
+            PlayerExperienceToNextLevel = PlayerCharacter.XpToNextLevel(session.PlayerCharacter.Level),
+            LeveledUp = session.PlayerCharacter.Level > levelBefore,
             CurrentLocation = session.CurrentLocation,
             LocationType = session.CurrentLocationType.ToString(),
             AppliedEvents = appliedEvents,
