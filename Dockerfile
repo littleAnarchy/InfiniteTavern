@@ -9,8 +9,8 @@ COPY src/InfiniteTavern.Application/*.csproj ./src/InfiniteTavern.Application/
 COPY src/InfiniteTavern.Domain/*.csproj ./src/InfiniteTavern.Domain/
 COPY src/InfiniteTavern.Infrastructure/*.csproj ./src/InfiniteTavern.Infrastructure/
 
-# Restore dependencies
-RUN dotnet restore
+# Restore dependencies (only API project to avoid requiring test projects)
+RUN dotnet restore src/InfiniteTavern.API/InfiniteTavern.API.csproj
 
 # Copy everything else
 COPY . ./
