@@ -143,7 +143,7 @@ public class GameService : IGameService
                     Description = "Your starting weapon",
                     Quantity = 1,
                     IsEquipped = true,
-                    Bonuses = new Dictionary<string, int> { { "Strength", 2 } }
+                    Bonuses = new Dictionary<string, int> { { "Strength", 1 } }
                 },
                 new Item
                 {

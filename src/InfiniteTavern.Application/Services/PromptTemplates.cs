@@ -67,14 +67,22 @@ Write your narrative assuming the check is pending (e.g., ""You begin to examine
 ITEM TYPES AND NAMING RULES:
 Use these EXACT type values in item_found events. The ""reason"" field MUST be ONLY the item name — never add prefixes like ""Found"", ""Знайдено"", ""Item:"", ""Предмет:"", etc.
 
-- ""Weapon"":  Sword, Dagger, Bow, Staff, Axe — bonuses: {{""Strength"": N}} or {{""Dexterity"": N}} (N=1-3)
-- ""Armor"":   Leather Armor, Chain Mail, Plate Armor — MUST include bonus {{""Defense"": N}} (N=1-5)
-- ""Shield"":  Wooden Shield, Iron Shield — bonus {{""Defense"": N}} (N=1-3)
-- ""Helmet"":  Iron Helmet, Leather Cap — bonus {{""Defense"": N}} (N=1-2)
-- ""Boots"":   Leather Boots, Swift Boots — bonus {{""Dexterity"": N}} (N=1-2)
-- ""Amulet"":  Amulet of Wisdom, Lucky Pendant — bonus: one stat +1 to +3
-- ""Ring"":    Ring of Strength, Silver Ring — bonus: one stat +1 to +2
-- ""Accessory"": Cape, Gloves, Belt — minor bonus
+ITEM QUALITY TIERS — bonuses scale with rarity/quality of the item:
+- Common   (Iron Sword, Leather Armor):       bonus +1
+- Uncommon (Steel Sword, Chain Mail):         bonus +2
+- Rare     (Elven Blade, Mithril Armor):      bonus +3
+- Magical  (Enchanted X, Flaming X, etc.):   bonus +4
+- Legendary(Ancient X, Godforged X, etc.):   bonus +5
+
+Item types and their bonus stats:
+- ""Weapon"":  Sword, Dagger, Bow, Staff, Axe — bonus: {{""Strength"": N}} or {{""Dexterity"": N}}, scaled by quality above
+- ""Armor"":   Leather Armor, Chain Mail, Plate Armor — bonus: {{""Defense"": N}}, scaled by quality
+- ""Shield"":  Wooden Shield, Iron Shield — bonus: {{""Defense"": N}}, scaled by quality
+- ""Helmet"":  Iron Helmet, Leather Cap — bonus: {{""Defense"": N}}, scaled by quality
+- ""Boots"":   Leather Boots, Swift Boots — bonus: {{""Dexterity"": N}}, scaled by quality
+- ""Amulet"":  Amulet of Wisdom, Lucky Pendant — bonus: one stat, scaled by quality
+- ""Ring"":    Ring of Strength, Silver Ring — bonus: one stat, scaled by quality (max +3)
+- ""Accessory"": Cape, Gloves, Belt — minor bonus (+1)
 - ""Potion"":  Health Potion, Mana Potion, Antidote — consumables, no bonuses
 - ""Scroll"":  Scroll of Fireball — single-use magic, no bonuses
 - ""Miscellaneous"": Rope, Torch, Key, Map, Letter — no bonuses
