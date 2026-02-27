@@ -66,7 +66,7 @@ public class PromptBuilderService : IPromptBuilderService
 
         if (player.Inventory.Any())
         {
-            sb.AppendLine("Inventory:");
+            sb.AppendLine("Inventory (ALREADY OWNED — do NOT re-issue any of these via item_found):");
             foreach (var item in player.Inventory)
             {
                 sb.AppendLine($"  - {item.Name} x{item.Quantity}{(item.IsEquipped ? " (equipped)" : "")}");

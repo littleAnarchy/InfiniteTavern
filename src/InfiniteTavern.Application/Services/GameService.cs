@@ -451,10 +451,13 @@ public class GameService : IGameService
         // Increment turn number
         session.TurnNumber++;
 
-        // Save memory entry
+        // Save memory entry (include applied events so AI knows what was granted each turn)
+        var eventsSummary = appliedEvents.Any()
+            ? " Events: " + string.Join("; ", appliedEvents)
+            : string.Empty;
         var memoryEntry = new MemoryEntry
         {
-            Content = $"Turn {session.TurnNumber}: Player action: {request.PlayerAction}. {aiResponse.Narrative}",
+            Content = $"Turn {session.TurnNumber}: Player action: {request.PlayerAction}. {aiResponse.Narrative}{eventsSummary}",
             Type = MemoryType.Event,
             ImportanceScore = 5,
             CreatedAt = DateTime.UtcNow

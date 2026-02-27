@@ -188,12 +188,17 @@ public class GameEventHandlerService : IGameEventHandlerService
         if (session.PlayerCharacter == null) yield break;
 
         var itemName = CleanItemName(gameEvent.Reason ?? string.Empty);
+        var itemType = !string.IsNullOrWhiteSpace(gameEvent.ItemType) ? gameEvent.ItemType : "Miscellaneous";
 
         var existingItem = session.PlayerCharacter.Inventory
             .FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
 
         if (existingItem != null)
         {
+            // If AI marked item as unique, skip duplicate (hallucination guard)
+            if (gameEvent.IsUnique)
+                yield break;
+
             existingItem.Quantity += gameEvent.Amount > 0 ? gameEvent.Amount : 1;
         }
         else
@@ -201,7 +206,7 @@ public class GameEventHandlerService : IGameEventHandlerService
             var newItem = new Item
             {
                 Name = itemName,
-                Type = !string.IsNullOrWhiteSpace(gameEvent.ItemType) ? gameEvent.ItemType : "Miscellaneous",
+                Type = itemType,
                 Description = "Found during adventure",
                 Quantity = gameEvent.Amount > 0 ? gameEvent.Amount : 1,
                 Bonuses = gameEvent.Bonuses ?? new Dictionary<string, int>()

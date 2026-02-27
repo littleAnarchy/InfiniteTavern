@@ -23,6 +23,7 @@ CRITICAL RULES:
 5. Do NOT invent player abilities
 6. Keep tone consistent fantasy (medieval/D&D style)
 7. Return ONLY valid JSON, no extra text
+8. NEVER emit ""item_found"" for items already listed in the player's inventory — check inventory before granting any item
 
 EVENT TYPES:
 - ""damage"": Reduce HP (target: ""player"" or NPC name, amount: number, reason: description)
@@ -75,17 +76,17 @@ ITEM QUALITY TIERS — bonuses scale with rarity/quality of the item:
 - Legendary(Ancient X, Godforged X, etc.):   bonus +5
 
 Item types and their bonus stats:
-- ""Weapon"":  Sword, Dagger, Bow, Staff, Axe — bonus: {{""Strength"": N}} or {{""Dexterity"": N}}, scaled by quality above
-- ""Armor"":   Leather Armor, Chain Mail, Plate Armor — bonus: {{""Defense"": N}}, scaled by quality
-- ""Shield"":  Wooden Shield, Iron Shield — bonus: {{""Defense"": N}}, scaled by quality
-- ""Helmet"":  Iron Helmet, Leather Cap — bonus: {{""Defense"": N}}, scaled by quality
-- ""Boots"":   Leather Boots, Swift Boots — bonus: {{""Dexterity"": N}}, scaled by quality
-- ""Amulet"":  Amulet of Wisdom, Lucky Pendant — bonus: one stat, scaled by quality
-- ""Ring"":    Ring of Strength, Silver Ring — bonus: one stat, scaled by quality (max +3)
-- ""Accessory"": Cape, Gloves, Belt — minor bonus (+1)
-- ""Potion"":  Health Potion, Mana Potion, Antidote — consumables, no bonuses
-- ""Scroll"":  Scroll of Fireball — single-use magic, no bonuses
-- ""Miscellaneous"": Rope, Torch, Key, Map, Letter — no bonuses
+- ""Weapon"":  Sword, Dagger, Bow, Staff, Axe — bonus: {{""Strength"": N}} or {{""Dexterity"": N}}, scaled by quality above; is_unique: true
+- ""Armor"":   Leather Armor, Chain Mail, Plate Armor — bonus: {{""Defense"": N}}, scaled by quality; is_unique: true
+- ""Shield"":  Wooden Shield, Iron Shield — bonus: {{""Defense"": N}}, scaled by quality; is_unique: true
+- ""Helmet"":  Iron Helmet, Leather Cap — bonus: {{""Defense"": N}}, scaled by quality; is_unique: true
+- ""Boots"":   Leather Boots, Swift Boots — bonus: {{""Dexterity"": N}}, scaled by quality; is_unique: true
+- ""Amulet"":  Amulet of Wisdom, Lucky Pendant — bonus: one stat, scaled by quality; is_unique: true
+- ""Ring"":    Ring of Strength, Silver Ring — bonus: one stat, scaled by quality (max +3); is_unique: true
+- ""Accessory"": Cape, Gloves, Belt — minor bonus (+1); is_unique: true
+- ""Potion"":  Health Potion, Mana Potion, Antidote — consumables, no bonuses; is_unique: false
+- ""Scroll"":  Scroll of Fireball — single-use magic, no bonuses; is_unique: false
+- ""Miscellaneous"": Rope, Torch, Key, Map, Letter — no bonuses; is_unique: false
 
 CRITICAL NAMING: item ""reason"" = ONLY the item name.
   CORRECT: ""reason"": ""Leather Armor""
@@ -116,7 +117,8 @@ RESPONSE FORMAT (strict JSON):
       ""target"": ""player"",
       ""amount"": 1,
       ""reason"": ""Health Potion"",
-      ""item_type"": ""Potion""
+      ""item_type"": ""Potion"",
+      ""is_unique"": false
     }},
     {{
       ""type"": ""item_found"",
@@ -124,7 +126,8 @@ RESPONSE FORMAT (strict JSON):
       ""amount"": 1,
       ""reason"": ""Leather Armor"",
       ""item_type"": ""Armor"",
-      ""bonuses"": {{""Defense"": 2}}
+      ""bonuses"": {{""Defense"": 2}},
+      ""is_unique"": true
     }},
     {{
       ""type"": ""gold_found"",

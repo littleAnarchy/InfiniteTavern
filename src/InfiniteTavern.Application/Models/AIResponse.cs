@@ -57,6 +57,10 @@ public class GameEvent
     /// <summary>Item stat bonuses for item_found events, e.g. {"Defense": 2, "Strength": 1}.</summary>
     [JsonPropertyName("bonuses")]
     public Dictionary<string, int>? Bonuses { get; set; }
+
+    /// <summary>If true, item cannot stack — a second item_found with the same name is ignored.</summary>
+    [JsonPropertyName("is_unique")]
+    public bool IsUnique { get; set; }
 }
 
 public class NewNpc
