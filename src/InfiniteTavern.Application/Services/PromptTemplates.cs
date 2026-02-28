@@ -429,7 +429,7 @@ IMPORTANT: Include the ""enemies"" array ONLY when the failure logically causes 
         var isUkrainian = language.Equals("Ukrainian", StringComparison.OrdinalIgnoreCase);
         
         return isUkrainian
-            ? "IMPORTANT: Respond ONLY in Ukrainian language. All narrative, dialogues, descriptions, and suggested actions must be in Ukrainian."
+            ? "IMPORTANT: Respond ONLY in Ukrainian language. All narrative, dialogues, and descriptions must be in Ukrainian."
             : "IMPORTANT: Respond in English language.";
     }
 
