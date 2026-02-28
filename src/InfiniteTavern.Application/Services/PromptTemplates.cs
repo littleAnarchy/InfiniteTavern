@@ -383,8 +383,19 @@ RESPONSE FORMAT:
       ""amount"": 3,
       ""reason"": ""Fell while climbing"" or ""Ancient treasure"" etc.
     }}
+  ],
+  ""enemies"": [
+    {{
+      ""name"": ""Enemy Name"",
+      ""hp"": 12,
+      ""maxHP"": 12,
+      ""description"": ""Brief enemy description"",
+      ""attack"": 4
+    }}
   ]
-}}";
+}}
+
+IMPORTANT: Include the ""enemies"" array ONLY when the failure logically causes a combat encounter to begin (e.g., failed stealth → guards spot you and attack, failed pickpocket → merchant calls guards). Use the same HP/attack tiers as the main DM. Leave ""enemies"" as an empty array [] if no combat starts.";
 
     /// <summary>
     /// Gets the default fallback opening narrative.

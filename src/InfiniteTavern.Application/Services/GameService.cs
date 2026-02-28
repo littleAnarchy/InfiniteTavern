@@ -434,10 +434,38 @@ public class GameService : IGameService
             var outcome = await GenerateSkillCheckOutcomeAsync(session, rollResult, request.PlayerAction);
             skillCheckNarratives.Add(outcome.Narrative);
 
-            // Then apply outcome events (e.g., damage from falling)
+            // Apply outcome events (e.g., damage from falling)
             foreach (var outcomeEvent in outcome.Events)
             {
                 _eventHandler.ApplyEvent(session, outcomeEvent, appliedEvents);
+            }
+
+            // Start combat if outcome spawned enemies (e.g., failed stealth → guards attack)
+            if (outcome.Enemies.Any())
+            {
+                foreach (var enemyResponse in outcome.Enemies)
+                {
+                    var existing = session.Enemies.FirstOrDefault(e =>
+                        e.Name.Equals(enemyResponse.Name, StringComparison.OrdinalIgnoreCase));
+                    if (existing == null)
+                    {
+                        session.Enemies.Add(new Enemy
+                        {
+                            Name = enemyResponse.Name,
+                            HP = enemyResponse.HP,
+                            MaxHP = enemyResponse.MaxHP,
+                            Description = enemyResponse.Description,
+                            IsAlive = enemyResponse.HP > 0,
+                            Attack = enemyResponse.Attack > 0 ? enemyResponse.Attack : 3
+                        });
+                    }
+                }
+
+                if (!session.IsInCombat && session.Enemies.Any(e => e.IsAlive))
+                {
+                    session.IsInCombat = true;
+                    appliedEvents.Add("Combat started!");
+                }
             }
         }
 
@@ -558,7 +586,7 @@ public class GameService : IGameService
         };
     }
 
-    private async Task<(string Narrative, List<GameEvent> Events)> GenerateSkillCheckOutcomeAsync(
+    private async Task<AIResponse> GenerateSkillCheckOutcomeAsync(
         GameSession session,
         DiceRollResult rollResult,
         string playerAction)
@@ -583,7 +611,7 @@ public class GameService : IGameService
             // Record token usage
             RecordTokenUsage(session, response, "SkillCheck");
             
-            return (response.Narrative, response.Events);
+            return response;
         }
         catch (Exception ex)
         {
@@ -591,7 +619,7 @@ public class GameService : IGameService
             var fallbackNarrative = rollResult.Success
                 ? $"You manage to {rollResult.Purpose.ToLower()} successfully!"
                 : $"You fail to {rollResult.Purpose.ToLower()}.";
-            return (fallbackNarrative, new List<GameEvent>());
+            return new AIResponse { Narrative = fallbackNarrative, Events = new List<GameEvent>(), Enemies = new List<EnemyResponse>() };
         }
     }
 
