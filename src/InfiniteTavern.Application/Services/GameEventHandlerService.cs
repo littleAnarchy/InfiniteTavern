@@ -80,6 +80,16 @@ public class GameEventHandlerService : IGameEventHandlerService
                     yield return $"{session.PlayerCharacter.Name} {action} the attack from {attacker.Name}! (roll {roll}, needed {Math.Max(1, hitThreshold)})";
                     yield break;
                 }
+
+                // Nat 20 = critical hit — double damage
+                if (roll == 20)
+                {
+                    gameEvent.Amount *= 2;
+                    session.PlayerCharacter.HP = Math.Max(0, session.PlayerCharacter.HP - gameEvent.Amount);
+                    yield return $"💥 Critical Hit! Player took {gameEvent.Amount} damage: {gameEvent.Reason}";
+                    if (session.PlayerCharacter.HP == 0) yield return "Player has fallen!";
+                    yield break;
+                }
             }
 
             session.PlayerCharacter.HP = Math.Max(0, session.PlayerCharacter.HP - gameEvent.Amount);
@@ -98,8 +108,13 @@ public class GameEventHandlerService : IGameEventHandlerService
             
             if (enemy != null)
             {
-                enemy.HP = Math.Max(0, enemy.HP - gameEvent.Amount);
-                yield return $"{enemy.Name} took {gameEvent.Amount} damage: {gameEvent.Reason}";
+                // Player attack roll — nat 20 = critical hit
+                var attackRoll = _diceService.Roll("1d20");
+                var actualDamage = attackRoll == 20 ? gameEvent.Amount * 2 : gameEvent.Amount;
+                var critPrefix = attackRoll == 20 ? "💥 Critical Hit! " : string.Empty;
+
+                enemy.HP = Math.Max(0, enemy.HP - actualDamage);
+                yield return $"{critPrefix}{enemy.Name} took {actualDamage} damage: {gameEvent.Reason}";
 
                 if (enemy.HP == 0)
                 {
