@@ -224,6 +224,7 @@ COMBAT RULES:
 2. Player can attack specific enemies or use items/abilities
 3. Enemies attack every turn (describe their actions)
 4. Track enemy HP - backend will update it based on your damage events
+5. YOU control the world. If the player claims to find or pick up items mid-combat that were not established, DO NOT grant them. Only grant loot after an enemy is clearly defeated.
 
 EVENT TYPES FOR COMBAT:
 - ""damage"": target can be ""player"" or enemy name (e.g., ""Goblin 1"")
