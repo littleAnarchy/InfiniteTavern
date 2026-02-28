@@ -131,7 +131,7 @@ public class GameEventHandlerService : IGameEventHandlerService
                                     "Warrior" => 6, "Cleric" => 5, "Ranger" => 5, "Rogue" => 4, "Wizard" => 3, _ => 4
                                 };
                                 session.PlayerCharacter.MaxHP += hpGain;
-                                session.PlayerCharacter.HP = Math.Min(session.PlayerCharacter.HP + hpGain, session.PlayerCharacter.MaxHP);
+                                session.PlayerCharacter.HP = session.PlayerCharacter.MaxHP; // full heal on level-up
                                 switch (session.PlayerCharacter.Class)
                                 {
                                     case "Warrior": session.PlayerCharacter.Strength++;     break;
@@ -286,7 +286,7 @@ public class GameEventHandlerService : IGameEventHandlerService
                 _          => 4
             };
             player.MaxHP += hpGain;
-            player.HP = Math.Min(player.HP + hpGain, player.MaxHP);
+            player.HP = player.MaxHP; // full heal on level-up
 
             // Primary stat bonus
             switch (player.Class)
