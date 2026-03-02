@@ -4,9 +4,10 @@ import './EnemyList.css';
 
 interface EnemyListProps {
   enemies: Enemy[];
+  compact?: boolean;
 }
 
-function EnemyList({ enemies }: EnemyListProps) {
+function EnemyList({ enemies, compact = false }: EnemyListProps) {
   const { t } = useTranslation();
 
   console.log('EnemyList received enemies:', enemies);
@@ -27,6 +28,31 @@ function EnemyList({ enemies }: EnemyListProps) {
   }
 
   console.log('EnemyList: RENDERING enemy list!');
+
+  // Compact mode for mobile
+  if (compact) {
+    return (
+      <div className="enemy-list enemy-list-compact">
+        <div className="enemy-compact-title">⚔️ {t('enemies')}</div>
+        <div className="enemy-compact-grid">
+          {aliveEnemies.map((enemy, index) => (
+            <div key={index} className="enemy-compact-card">
+              <div className="enemy-compact-name">{enemy.name}</div>
+              <div className="enemy-compact-hp">
+                <div className="enemy-compact-hp-bar">
+                  <div
+                    className="enemy-compact-hp-fill"
+                    style={{ width: `${(enemy.hp / enemy.maxHP) * 100}%` }}
+                  />
+                </div>
+                <span className="enemy-compact-hp-text">{enemy.hp}/{enemy.maxHP}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="enemy-list">

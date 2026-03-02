@@ -6,6 +6,8 @@ import TurnHistory from './TurnHistory';
 import Inventory from './Inventory';
 import EnemyList from './EnemyList';
 import LocationParticles from './LocationParticles';
+import MobileNavigation from './MobileNavigation';
+import CompactHPBar from './CompactHPBar';
 
 interface GameViewProps {
   gameState: GameState;
@@ -18,6 +20,7 @@ export default function GameView({ gameState, onSubmitAction, onNewGame, onEquip
   const { t } = useTranslation();
   const [action, setAction] = useState('');
   const [leftTab, setLeftTab] = useState<'stats' | 'inventory'>('stats');
+  const [mobileTab, setMobileTab] = useState<'story' | 'character' | 'inventory'>('story');
 
   useEffect(() => {
     if (gameState.isInCombat) {
@@ -48,11 +51,19 @@ export default function GameView({ gameState, onSubmitAction, onNewGame, onEquip
   return (
     <div className={`game-view location-${gameState.locationType.toLowerCase()}`}>
       <LocationParticles locationType={gameState.locationType} />
+      
+      {/* Mobile Enemies (when in combat) */}
+      {gameState.isInCombat && gameState.enemies.length > 0 && (
+        <div className="mobile-enemies-bar">
+          <EnemyList enemies={gameState.enemies} compact />
+        </div>
+      )}
+      
       <div className="game-header">
         <h1>{t('gameTitle')}</h1>
       </div>
 
-      <div className={`game-layout ${gameState.isInCombat ? 'in-combat' : ''}`}>
+      <div className={`game-layout ${gameState.isInCombat ? 'in-combat' : ''} mobile-tab-${mobileTab}`}>
         <aside className="sidebar">
           {gameState.isInCombat ? (
             <div className={`sidebar-flip-card ${leftTab === 'inventory' ? 'is-flipped' : ''}`}>
@@ -158,6 +169,21 @@ export default function GameView({ gameState, onSubmitAction, onNewGame, onEquip
           )}
         </aside>
       </div>
+      
+      {/* Mobile HP Bar */}
+      <CompactHPBar 
+        characterName={gameState.playerStats.name}
+        hp={gameState.playerStats.hp}
+        maxHP={gameState.playerStats.maxHP}
+        level={gameState.playerStats.level}
+      />
+      
+      {/* Mobile Navigation */}
+      <MobileNavigation 
+        activeTab={mobileTab}
+        onTabChange={setMobileTab}
+        hasEnemies={gameState.isInCombat && gameState.enemies.length > 0}
+      />
     </div>
   );
 }
