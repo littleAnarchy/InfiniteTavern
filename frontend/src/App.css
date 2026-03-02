@@ -1110,7 +1110,8 @@ button:disabled {
 /* Mobile Game View Styles */
 @media (max-width: 1024px) {
   .game-view {
-    padding-bottom: 130px; /* Space for mobile navigation (60px) + HP bar (40px) + spacing */
+    padding-top: 50px; /* Space for HP bar at top */
+    padding-bottom: 70px; /* Space for mobile navigation */
   }
 
   .mobile-enemies-bar {
@@ -1139,54 +1140,117 @@ button:disabled {
   /* Show character panel when character tab is active */
   .game-layout.mobile-tab-character .sidebar {
     display: block;
-    padding: 16px;
+    padding: 8px;
+  }
+
+  /* Ensure sidebar-right is hidden in character tab */
+  .game-layout.mobile-tab-character .sidebar-right {
+    display: none !important;
   }
 
   /* Show story panel when story tab is active */
   .game-layout.mobile-tab-story .main-content {
-    display: block;
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    height: calc(100vh - 50px - 70px); /* Full height minus HP bar and nav */
   }
 
   /* Show inventory panel when inventory tab is active */
   .game-layout.mobile-tab-inventory .sidebar-right {
     display: block;
-    padding: 16px;
+    padding: 8px;
   }
 
   /* Adjust main content for mobile */
   .main-content .history-container {
-    max-height: calc(100vh - 200px);
-    margin-bottom: 16px;
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 0;
+    padding: 8px;
+    background: var(--bg-dark);
+    border-radius: 12px 12px 0 0;
   }
 
   .action-form {
     position: static;
-    background: transparent;
-    padding: 16px;
-    border-top: 2px solid var(--border-color);
+    background: var(--bg-dark);
+    padding: 8px;
+    padding-top: 12px;
+    padding-bottom: 32px; /* Space to avoid overlap with mobile navigation */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin: 0;
+    flex-shrink: 0;
+    gap: 8px;
+    border-radius: 0 0 12px 12px;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
   }
 
   .action-panel {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    width: 100%;
   }
 
   .action-input {
     font-size: 16px; /* Prevents zoom on iOS */
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .action-panel .btn-primary {
+    padding: 10px 24px;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  /* Compact suggested actions for mobile */
+  .suggested-actions {
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    border: none;
+  }
+
+  .suggested-actions-label {
+    margin-bottom: 4px;
+    font-size: 0.8rem;
   }
 
   .suggested-actions-buttons {
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px;
   }
 
   .btn-suggested {
-    flex: 1 1 calc(50% - 3px);
+    flex: 1 1 calc(50% - 2px);
     min-width: 0;
-    font-size: 13px;
-    padding: 10px 12px;
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+
+  /* Compact history items for mobile */
+  .player-action {
+    padding: 6px 8px;
+    margin-bottom: 6px;
+  }
+
+  .narrative {
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  .events {
+    gap: 4px;
+  }
+
+  .event-item {
+    padding: 4px 8px;
+    font-size: 0.85rem;
   }
 
   /* Hide desktop-only elements */
@@ -1197,7 +1261,7 @@ button:disabled {
 
   /* Simplify player stats for mobile */
   .player-stats {
-    padding: 16px;
+    padding: 8px;
     display: none; /* Hidden - shown via CompactHPBar */
   }
 
@@ -1205,15 +1269,32 @@ button:disabled {
     display: block;
   }
 
+  /* Hide flip-card inventory in character tab on mobile */
+  .game-layout.mobile-tab-character .sidebar-flip-card .sidebar-face-back {
+    display: none !important;
+  }
+
+  .game-layout.mobile-tab-character .sidebar-flip-card .face-toggle-button {
+    display: none !important;
+  }
+
+  .game-layout.mobile-tab-character .sidebar-flip-card {
+    pointer-events: none; /* Prevent flipping */
+  }
+
+  .game-layout.mobile-tab-character .sidebar-flip-card .sidebar-face-front {
+    pointer-events: auto; /* Allow interaction with stats */
+  }
+
   /* Make inventory scrollable on mobile */
   .sidebar-right {
     overflow-y: auto;
-    max-height: calc(100vh - 250px);
+    max-height: calc(100vh - 120px);
   }
 
   /* Enemy list in sidebar */
   .sidebar-right .enemy-list {
-    max-height: calc(100vh - 250px);
+    max-height: calc(100vh - 120px);
     overflow-y: auto;
   }
 }

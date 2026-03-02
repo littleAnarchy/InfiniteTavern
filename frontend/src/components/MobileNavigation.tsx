@@ -1,4 +1,5 @@
 import './MobileNavigation.css';
+import { useTranslation } from 'react-i18next';
 
 interface MobileNavigationProps {
   activeTab: 'story' | 'character' | 'inventory';
@@ -11,34 +12,36 @@ export default function MobileNavigation({
   onTabChange,
   hasEnemies 
 }: MobileNavigationProps) {
+  const { t } = useTranslation();
+  
   return (
     <nav className="mobile-navigation">
       <button
         className={`mobile-nav-tab ${activeTab === 'character' ? 'active' : ''}`}
         onClick={() => onTabChange('character')}
-        aria-label="Character"
+        aria-label={t('stats')}
       >
         <span className="mobile-nav-icon">👤</span>
-        <span className="mobile-nav-label">Character</span>
+        <span className="mobile-nav-label">{t('stats')}</span>
       </button>
       
       <button
         className={`mobile-nav-tab ${activeTab === 'story' ? 'active' : ''}`}
         onClick={() => onTabChange('story')}
-        aria-label="Story"
+        aria-label={t('story')}
       >
         <span className="mobile-nav-icon">📖</span>
-        <span className="mobile-nav-label">Story</span>
+        <span className="mobile-nav-label">{t('story')}</span>
         {hasEnemies && <span className="mobile-nav-badge">!</span>}
       </button>
       
       <button
         className={`mobile-nav-tab ${activeTab === 'inventory' ? 'active' : ''}`}
         onClick={() => onTabChange('inventory')}
-        aria-label="Inventory"
+        aria-label={t('inventory')}
       >
-        <span className="mobile-nav-icon">🎒</span>
-        <span className="mobile-nav-label">Inventory</span>
+        <span className="mobile-nav-icon">💼</span>
+        <span className="mobile-nav-label">{t('inventory')}</span>
       </button>
     </nav>
   );

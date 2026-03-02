@@ -84,6 +84,7 @@ export default {
   equip: 'Одягти',
   unequip: 'Зняти',
   stats: 'Статистика',
+  story: 'Історія',
   itemTypeWeapon: 'Зброя',
   itemTypeArmor: 'Обладунки',
   itemTypeShield: 'Щит',

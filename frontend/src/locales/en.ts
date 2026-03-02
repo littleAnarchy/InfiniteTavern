@@ -84,6 +84,7 @@ export default {
   equip: 'Equip',
   unequip: 'Unequip',
   stats: 'Stats',
+  story: 'Story',
   itemTypeWeapon: 'Weapon',
   itemTypeArmor: 'Armor',
   itemTypeShield: 'Shield',

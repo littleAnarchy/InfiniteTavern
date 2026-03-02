@@ -1,14 +1,14 @@
 .compact-hp-bar {
   display: none; /* Hidden on desktop */
   position: fixed;
-  bottom: 60px; /* Above mobile navigation (60px height) */
+  top: 0; /* At the very top */
   left: 0;
   right: 0;
   background: rgba(17, 24, 39, 0.98);
   backdrop-filter: blur(10px);
   padding: 8px 12px;
-  border-top: 1px solid var(--border-color);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   z-index: 999;
 }
 
