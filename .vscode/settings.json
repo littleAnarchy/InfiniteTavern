@@ -1,0 +1,11 @@
+{
+  "github.copilot.chat.modelContextProtocol": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp"],
+      "env": {
+        "PLAYWRIGHT_BROWSERS_PATH": "0"
+      }
+    }
+  }
+}
