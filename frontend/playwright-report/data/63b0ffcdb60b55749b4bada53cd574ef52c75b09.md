@@ -1,0 +1,51 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: ⚔️
+    - heading "Infinite Tavern" [level=1] [ref=e6]
+    - paragraph [ref=e7]: Цей сайт ще не адаптований під мобільні пристрої.
+    - paragraph [ref=e8]: Будь ласка, відкрийте його на комп'ютері для найкращого досвіду.
+    - generic [ref=e9]: 🖥️ Desktop only
+  - generic [ref=e10]:
+    - heading "🏰 Ласкаво просимо до Нескінченної Таверни" [level=1] [ref=e11]
+    - paragraph [ref=e12]: Створіть свого персонажа, щоб розпочати пригоду
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: Ім'я персонажа
+        - textbox "Ім'я персонажа" [ref=e16]:
+          - /placeholder: Введіть ім'я персонажа
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: Раса
+          - combobox [ref=e21] [cursor=pointer]:
+            - generic [ref=e22]: Людина
+            - generic [ref=e23]: ▼
+        - generic [ref=e25]:
+          - generic [ref=e26]: Клас
+          - combobox [ref=e27] [cursor=pointer]:
+            - generic [ref=e28]: Воїн
+            - generic [ref=e29]: ▼
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]: Мова гри
+          - combobox [ref=e33] [cursor=pointer]:
+            - generic [ref=e34]: Українська
+            - generic [ref=e35]: ▼
+        - generic [ref=e36]: Виберіть мову для історії
+      - generic [ref=e37]:
+        - generic [ref=e38]: Тип кампанії
+        - generic [ref=e39]:
+          - generic [ref=e40] [cursor=pointer]:
+            - radio "🏰 Дефолтна кампанія Класичний старт у таверні з Гарріком" [checked] [ref=e41]
+            - generic [ref=e42]:
+              - strong [ref=e43]: 🏰 Дефолтна кампанія
+              - generic [ref=e44]: Класичний старт у таверні з Гарріком
+          - generic [ref=e45] [cursor=pointer]:
+            - radio "🎲 Випадкова кампанія AI створить унікальну історію для вас" [ref=e46]
+            - generic [ref=e47]:
+              - strong [ref=e48]: 🎲 Випадкова кампанія
+              - generic [ref=e49]: AI створить унікальну історію для вас
+      - button "Почати пригоду" [ref=e50] [cursor=pointer]
+```

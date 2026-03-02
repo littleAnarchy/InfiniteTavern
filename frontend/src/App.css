@@ -104,6 +104,19 @@ body {
   background: rgba(139, 92, 246, 0.02);
 }
 
+.form-group select option {
+  background: var(--bg-darker);
+  color: var(--text-primary);
+  padding: 10px;
+}
+
+/* Fallback for browsers that support it */
+.form-group select option:checked,
+.form-group select option:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;

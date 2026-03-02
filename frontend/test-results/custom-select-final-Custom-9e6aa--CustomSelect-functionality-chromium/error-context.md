@@ -1,0 +1,51 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - heading "🏰 Ласкаво просимо до Нескінченної Таверни" [level=1] [ref=e5]
+  - paragraph [ref=e6]: Створіть свого персонажа, щоб розпочати пригоду
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]: Ім'я персонажа
+      - textbox "Ім'я персонажа" [ref=e10]:
+        - /placeholder: Введіть ім'я персонажа
+        - text: Test Character
+    - generic [ref=e11]:
+      - generic [ref=e13]:
+        - generic [ref=e14]: Раса
+        - combobox [expanded] [active] [ref=e15] [cursor=pointer]:
+          - generic [ref=e16]: Людина
+          - generic [ref=e17]: ▼
+        - listbox [ref=e18]:
+          - option "Людина ✓" [selected] [ref=e19] [cursor=pointer]
+          - option "Ельф" [ref=e20] [cursor=pointer]
+          - option "Гном" [ref=e21] [cursor=pointer]
+          - option "Орк" [ref=e22] [cursor=pointer]
+          - option "Халфлінг" [ref=e23] [cursor=pointer]
+      - generic [ref=e25]:
+        - generic [ref=e26]: Клас
+        - combobox [ref=e27] [cursor=pointer]:
+          - generic [ref=e28]: Воїн
+          - generic [ref=e29]: ▼
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - generic [ref=e32]: Мова гри
+        - combobox [ref=e33] [cursor=pointer]:
+          - generic [ref=e34]: Українська
+          - generic [ref=e35]: ▼
+      - generic [ref=e36]: Виберіть мову для історії
+    - generic [ref=e37]:
+      - generic [ref=e38]: Тип кампанії
+      - generic [ref=e39]:
+        - generic [ref=e40] [cursor=pointer]:
+          - radio "🏰 Дефолтна кампанія Класичний старт у таверні з Гарріком" [checked] [ref=e41]
+          - generic [ref=e42]:
+            - strong [ref=e43]: 🏰 Дефолтна кампанія
+            - generic [ref=e44]: Класичний старт у таверні з Гарріком
+        - generic [ref=e45] [cursor=pointer]:
+          - radio "🎲 Випадкова кампанія AI створить унікальну історію для вас" [ref=e46]
+          - generic [ref=e47]:
+            - strong [ref=e48]: 🎲 Випадкова кампанія
+            - generic [ref=e49]: AI створить унікальну історію для вас
+    - button "Почати пригоду" [ref=e50] [cursor=pointer]
+```

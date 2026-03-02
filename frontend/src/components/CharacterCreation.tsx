@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NewGameRequest } from '../types/game';
 import { useTranslation } from 'react-i18next';
+import CustomSelect from './CustomSelect';
 
 interface CharacterCreationProps {
   onCreateCharacter: (request: NewGameRequest) => void;
@@ -25,6 +26,13 @@ export default function CharacterCreation({
 
   const translateRace = (race: string) => t(race.toLowerCase(), race);
   const translateClass = (cls: string) => t(cls.toLowerCase(), cls);
+
+  const raceOptions = RACES.map((r) => ({ value: r, label: translateRace(r) }));
+  const classOptions = CLASSES.map((c) => ({ value: c, label: translateClass(c) }));
+  const languageOptions = [
+    { value: 'Ukrainian', label: t('ukrainian') },
+    { value: 'English', label: t('english') },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,49 +66,37 @@ export default function CharacterCreation({
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="race">{t('race')}</label>
-            <select
+            <CustomSelect
               id="race"
+              label={t('race')}
               value={race}
-              onChange={(e) => setRace(e.target.value)}
+              options={raceOptions}
+              onChange={setRace}
               disabled={isLoading}
-            >
-              {RACES.map((r) => (
-                <option key={r} value={r}>
-                  {translateRace(r)}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div className="form-group">
-            <label htmlFor="class">{t('class')}</label>
-            <select
+            <CustomSelect
               id="class"
+              label={t('class')}
               value={characterClass}
-              onChange={(e) => setCharacterClass(e.target.value)}
+              options={classOptions}
+              onChange={setCharacterClass}
               disabled={isLoading}
-            >
-              {CLASSES.map((c) => (
-                <option key={c} value={c}>
-                  {translateClass(c)}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
 
         <div className="form-group">
-          <label htmlFor="gameLanguage">{t('gameLanguage')}</label>
-          <select
+          <CustomSelect
             id="gameLanguage"
+            label={t('gameLanguage')}
             value={gameLanguage}
-            onChange={(e) => setGameLanguage(e.target.value)}
+            options={languageOptions}
+            onChange={setGameLanguage}
             disabled={isLoading}
-          >
-            <option value="Ukrainian">{t('ukrainian')}</option>
-            <option value="English">{t('english')}</option>
-          </select>
+          />
           <small style={{ display: 'block', marginTop: '2px', opacity: 0.7, fontSize: '0.85rem' }}>
             {t('selectLanguage')}
           </small>
