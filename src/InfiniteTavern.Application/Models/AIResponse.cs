@@ -88,6 +88,12 @@ public class QuestUpdate
     
     [JsonPropertyName("logEntry")]
     public string? LogEntry { get; set; }
+    
+    [JsonPropertyName("objectives")]
+    public List<string>? Objectives { get; set; }
+    
+    [JsonPropertyName("completedObjectives")]
+    public List<string>? CompletedObjectives { get; set; }
 }
 
 public class LocationChange

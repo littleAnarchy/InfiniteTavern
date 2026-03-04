@@ -111,9 +111,20 @@ public class PromptBuilderService : IPromptBuilderService
             {
                 sb.AppendLine($"- {quest.Title}");
                 sb.AppendLine($"  {quest.Description}");
+                
+                if (quest.Objectives.Any())
+                {
+                    sb.AppendLine($"  Objectives:");
+                    foreach (var objective in quest.Objectives)
+                    {
+                        var status = objective.IsCompleted ? "✓" : "○";
+                        sb.AppendLine($"    {status} {objective.Description}");
+                    }
+                }
+                
                 if (quest.LogEntries.Any())
                 {
-                    sb.AppendLine($"  Progress:");
+                    sb.AppendLine($"  Progress Log:");
                     foreach (var entry in quest.LogEntries)
                     {
                         sb.AppendLine($"    • {entry}");
@@ -122,6 +133,7 @@ public class PromptBuilderService : IPromptBuilderService
             }
             sb.AppendLine();
             sb.AppendLine("QUEST FOCUS: The player has an active quest. Your narrative should focus on quest progression.");
+            sb.AppendLine("Check if player actions complete any objectives. Mark completed objectives using completedObjectives field with EXACT objective text.");
             sb.AppendLine("If quest details emerge, use quest_updates with logEntry to record them.");
             sb.AppendLine();
         }

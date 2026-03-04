@@ -448,7 +448,14 @@ public class GameService : IGameService
                 {
                     Title = questUpdate.QuestTitle,
                     Description = questUpdate.Description ?? string.Empty,
-                    Status = QuestStatus.Active
+                    Status = QuestStatus.Active,
+                    Objectives = (questUpdate.Objectives ?? new List<string>())
+                        .Select(obj => new QuestObjective 
+                        { 
+                            Description = obj, 
+                            IsCompleted = false 
+                        })
+                        .ToList()
                 };
                 session.Quests.Add(quest);
                 appliedEvents.Add($"New quest: {quest.Title}");
@@ -464,6 +471,22 @@ public class GameService : IGameService
                 // Update existing quest
                 var previousStatus = quest.Status;
                 quest.Status = status;
+
+                // Mark completed objectives
+                if (questUpdate.CompletedObjectives != null && questUpdate.CompletedObjectives.Any())
+                {
+                    foreach (var completedObjText in questUpdate.CompletedObjectives)
+                    {
+                        var objective = quest.Objectives.FirstOrDefault(o => 
+                            o.Description.Equals(completedObjText, StringComparison.OrdinalIgnoreCase));
+                        
+                        if (objective != null && !objective.IsCompleted)
+                        {
+                            objective.IsCompleted = true;
+                            appliedEvents.Add($"Quest objective completed: {objective.Description}");
+                        }
+                    }
+                }
 
                 // Add log entry if provided
                 if (!string.IsNullOrEmpty(questUpdate.LogEntry))
@@ -640,7 +663,12 @@ public class GameService : IGameService
                     Title = q.Title,
                     Description = q.Description,
                     Status = q.Status.ToString(),
-                    LogEntries = q.LogEntries
+                    LogEntries = q.LogEntries,
+                    Objectives = q.Objectives.Select(o => new QuestObjectiveDto
+                    {
+                        Description = o.Description,
+                        IsCompleted = o.IsCompleted
+                    }).ToList()
                 })
                 .FirstOrDefault(),
             QuestEvents = questEvents

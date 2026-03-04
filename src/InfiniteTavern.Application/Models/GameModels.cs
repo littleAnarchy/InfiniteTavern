@@ -105,6 +105,13 @@ public class QuestDto
     public string Description { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public List<string> LogEntries { get; set; } = new();
+    public List<QuestObjectiveDto> Objectives { get; set; } = new();
+}
+
+public class QuestObjectiveDto
+{
+    public string Description { get; set; } = string.Empty;
+    public bool IsCompleted { get; set; }
 }
 
 public class QuestEventDto

@@ -106,6 +106,7 @@ public class OpenAIService : IAIService
 
             // Extract JSON from markdown code blocks if present
             responseText = ExtractJsonFromMarkdown(responseText);
+            _logger.LogDebug(responseText);
 
             var gameResponse = JsonSerializer.Deserialize<AIResponse>(responseText, new JsonSerializerOptions
             {
