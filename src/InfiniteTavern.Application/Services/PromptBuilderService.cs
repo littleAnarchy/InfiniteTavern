@@ -128,8 +128,8 @@ public class PromptBuilderService : IPromptBuilderService
         else
         {
             sb.AppendLine("=== NO ACTIVE QUEST ===");
-            sb.AppendLine("The player has no active quest. Consider offering a quest through NPCs or environmental cues.");
-            sb.AppendLine("To offer a quest, use quest_updates with status: \"Active\", a title, and description.");
+            sb.AppendLine("The player has no active quest. When contextually appropriate (player asks NPCs, reads notice boards, explores), you may naturally introduce quest opportunities through the narrative.");
+            sb.AppendLine("Don't rush - let the player explore and interact first.");
             sb.AppendLine();
         }
 

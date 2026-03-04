@@ -427,6 +427,22 @@ public class GameService : IGameService
                     continue;
                 }
 
+                // Prevent quests on very early turns unless player is clearly interacting with NPCs
+                if (session.TurnNumber <= 2)
+                {
+                    var actionLower = request.PlayerAction?.ToLowerInvariant() ?? "";
+                    var hasNpcInteraction = actionLower.Contains("talk") || actionLower.Contains("ask") || 
+                                           actionLower.Contains("speak") || actionLower.Contains("говор") ||
+                                           actionLower.Contains("запит") || actionLower.Contains("розмов") ||
+                                           actionLower.Contains("спит");
+                    
+                    if (!hasNpcInteraction)
+                    {
+                        _logger.LogInformation("Skipping quest offer on turn {Turn} - no clear NPC interaction detected", session.TurnNumber);
+                        continue;
+                    }
+                }
+
                 // Create new quest
                 quest = new Quest
                 {
