@@ -25,6 +25,8 @@ public class TurnResponse
     public bool IsInCombat { get; set; }
     public bool IsGameOver { get; set; }
     public List<EnemyDto> Enemies { get; set; } = new();
+    public QuestDto? ActiveQuest { get; set; }
+    public List<QuestEventDto> QuestEvents { get; set; } = new();
 }
 
 public class DiceRollResult
@@ -95,6 +97,22 @@ public class EnemyDto
     public bool IsAlive { get; set; }
     public string Description { get; set; } = string.Empty;
     public int Attack { get; set; } = 3;
+}
+
+public class QuestDto
+{
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public List<string> LogEntries { get; set; } = new();
+}
+
+public class QuestEventDto
+{
+    public string Type { get; set; } = string.Empty; // "quest_offered", "quest_progress", "quest_completed", "quest_failed"
+    public string QuestTitle { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string? LogEntry { get; set; }
 }
 
 public class EquipItemRequest

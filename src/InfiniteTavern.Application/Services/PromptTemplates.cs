@@ -62,6 +62,24 @@ Award XP using ""xp_gained"" events whenever the player:
 Do NOT award XP for trivial actions like walking around or talking.
 Difficulty ranges: Easy (8), Medium (12), Hard (15), Very Hard (18)
 
+QUEST MANAGEMENT RULES:
+1. ONLY ONE ACTIVE QUEST AT A TIME — if player already has an active quest, do NOT offer a new one until current quest is completed or failed
+2. If NO active quest exists, consider offering one through NPCs, signs, rumors, or environmental cues
+3. When the active quest is ongoing, your narrative should focus on quest progression
+4. Use quest_updates for:
+   - OFFERING NEW QUEST: status=""Active"", include description (required for new quests), no logEntry
+   - RECORDING PROGRESS: keep status=""Active"", add logEntry with important details discovered
+   - COMPLETING QUEST: status=""Completed"", can add final logEntry
+   - FAILING QUEST: status=""Failed"", can add logEntry explaining why
+5. Quest status is decided by you (the narrator) based on player actions and story events
+6. ALWAYS include questTitle that EXACTLY matches the current quest title when updating
+7. Log entries should record: discovered clues, NPC information, location details, objectives completed
+
+Example quest flow:
+- Player has no quest → NPC offers ""Find the Lost Amulet"" → quest_updates: {{status: ""Active"", description: ""..."", questTitle: ""Find the Lost Amulet""}}
+- Player discovers clue → quest_updates: {{status: ""Active"", questTitle: ""Find the Lost Amulet"", logEntry: ""The merchant mentioned the amulet was last seen near the old ruins""}}
+- Player completes objective → quest_updates: {{status: ""Completed"", questTitle: ""Find the Lost Amulet"", logEntry: ""Retrieved the amulet from the ancient shrine""}}
+
 CRITICAL: If you request a skill check, DO NOT include events that depend on the check's outcome in your response.
 The backend will roll the dice, then you'll generate the consequences separately.
 
@@ -160,7 +178,9 @@ RESPONSE FORMAT (strict JSON):
   ""quest_updates"": [
     {{
       ""questTitle"": ""Exact quest title"",
-      ""status"": ""Active"" or ""Completed"" or ""Failed""
+      ""status"": ""Active"" or ""Completed"" or ""Failed"",
+      ""description"": ""Quest description (REQUIRED when status is Active for a NEW quest)"",
+      ""logEntry"": ""Important quest detail or progress update (optional)""
     }}
   ],
   ""location_change"": {{

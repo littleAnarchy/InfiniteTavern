@@ -82,6 +82,12 @@ public class QuestUpdate
     
     [JsonPropertyName("status")]
     public string Status { get; set; } = string.Empty;
+    
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
+    
+    [JsonPropertyName("logEntry")]
+    public string? LogEntry { get; set; }
 }
 
 public class LocationChange

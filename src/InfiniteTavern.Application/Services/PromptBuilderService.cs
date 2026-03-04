@@ -111,7 +111,25 @@ public class PromptBuilderService : IPromptBuilderService
             {
                 sb.AppendLine($"- {quest.Title}");
                 sb.AppendLine($"  {quest.Description}");
+                if (quest.LogEntries.Any())
+                {
+                    sb.AppendLine($"  Progress:");
+                    foreach (var entry in quest.LogEntries)
+                    {
+                        sb.AppendLine($"    • {entry}");
+                    }
+                }
             }
+            sb.AppendLine();
+            sb.AppendLine("QUEST FOCUS: The player has an active quest. Your narrative should focus on quest progression.");
+            sb.AppendLine("If quest details emerge, use quest_updates with logEntry to record them.");
+            sb.AppendLine();
+        }
+        else
+        {
+            sb.AppendLine("=== NO ACTIVE QUEST ===");
+            sb.AppendLine("The player has no active quest. Consider offering a quest through NPCs or environmental cues.");
+            sb.AppendLine("To offer a quest, use quest_updates with status: \"Active\", a title, and description.");
             sb.AppendLine();
         }
 

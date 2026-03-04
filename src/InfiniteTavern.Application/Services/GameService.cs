@@ -407,13 +407,84 @@ public class GameService : IGameService
         }
 
         // Update quests
+        var questEvents = new List<QuestEventDto>();
         foreach (var questUpdate in aiResponse.QuestUpdates)
         {
-            var quest = session.Quests.FirstOrDefault(q => q.Title == questUpdate.QuestTitle);
-            if (quest != null && Enum.TryParse<QuestStatus>(questUpdate.Status, out var status))
+            if (!Enum.TryParse<QuestStatus>(questUpdate.Status, out var status))
             {
+                continue;
+            }
+
+            var quest = session.Quests.FirstOrDefault(q => q.Title == questUpdate.QuestTitle);
+            
+            if (quest == null && status == QuestStatus.Active)
+            {
+                // New quest offered - check if player already has an active quest
+                var hasActiveQuest = session.Quests.Any(q => q.Status == QuestStatus.Active);
+                if (hasActiveQuest)
+                {
+                    _logger.LogWarning("AI tried to offer new quest '{QuestTitle}' but player already has active quest", questUpdate.QuestTitle);
+                    continue;
+                }
+
+                // Create new quest
+                quest = new Quest
+                {
+                    Title = questUpdate.QuestTitle,
+                    Description = questUpdate.Description ?? string.Empty,
+                    Status = QuestStatus.Active
+                };
+                session.Quests.Add(quest);
+                appliedEvents.Add($"New quest: {quest.Title}");
+                questEvents.Add(new QuestEventDto
+                {
+                    Type = "quest_offered",
+                    QuestTitle = quest.Title,
+                    Description = quest.Description
+                });
+            }
+            else if (quest != null)
+            {
+                // Update existing quest
+                var previousStatus = quest.Status;
                 quest.Status = status;
-                appliedEvents.Add($"Quest '{quest.Title}' is now {status}");
+
+                // Add log entry if provided
+                if (!string.IsNullOrEmpty(questUpdate.LogEntry))
+                {
+                    quest.LogEntries.Add(questUpdate.LogEntry);
+                    questEvents.Add(new QuestEventDto
+                    {
+                        Type = "quest_progress",
+                        QuestTitle = quest.Title,
+                        LogEntry = questUpdate.LogEntry
+                    });
+                }
+
+                // Track status changes
+                if (previousStatus != status)
+                {
+                    appliedEvents.Add($"Quest '{quest.Title}' is now {status}");
+                    
+                    if (status == QuestStatus.Completed)
+                    {
+                        questEvents.Add(new QuestEventDto
+                        {
+                            Type = "quest_completed",
+                            QuestTitle = quest.Title,
+                            LogEntry = questUpdate.LogEntry
+                        });
+                    }
+                    else if (status == QuestStatus.Failed)
+                    {
+                        questEvents.Add(new QuestEventDto
+                        {
+                            Type = "quest_failed",
+                            QuestTitle = quest.Title,
+                            LogEntry = questUpdate.LogEntry
+                        });
+                    }
+                }
             }
         }
 
@@ -545,7 +616,18 @@ public class GameService : IGameService
                 IsAlive = e.IsAlive,
                 Description = e.Description,
                 Attack = e.Attack
-            }).ToList()
+            }).ToList(),
+            ActiveQuest = session.Quests
+                .Where(q => q.Status == QuestStatus.Active)
+                .Select(q => new QuestDto
+                {
+                    Title = q.Title,
+                    Description = q.Description,
+                    Status = q.Status.ToString(),
+                    LogEntries = q.LogEntries
+                })
+                .FirstOrDefault(),
+            QuestEvents = questEvents
         };
     }
 
